@@ -8,7 +8,7 @@ import { reduceErrorMessage, debounce } from 'c/wsmRrUtils';
  * 'clear' when the selection is removed.
  */
 export default class WsmRrFallbackPicker extends LightningElement {
-    @api label = 'Fallback';
+    @api label;
     @api placeholder = 'Search users and queues…';
 
     /** Saved selection shown before options load. */

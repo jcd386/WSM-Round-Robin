@@ -2,8 +2,28 @@
     display: block;
 }
 
+.wrc__option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.wrc__option > .slds-truncate {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
 .wrc__sublabel {
-    display: block;
+    flex: 0 0 auto;
+    margin-left: auto;
+    max-width: 45%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: 0.6875rem;
+    line-height: 1.7;
+    padding: 0 7px;
+    border-radius: 9px;
+    background: var(--slds-g-color-neutral-base-95, #f3f2f2);
     color: var(--slds-g-color-neutral-base-30, #706e6b);
 }

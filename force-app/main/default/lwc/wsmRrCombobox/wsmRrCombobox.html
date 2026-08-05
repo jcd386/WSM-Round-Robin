@@ -31,10 +31,10 @@
                     <ul class="slds-listbox slds-listbox_vertical">
                         <template for:each={filteredOptions} for:item="opt">
                             <li key={opt.value} class="slds-listbox__item" data-value={opt.value} onmousedown={handleSelect}>
-                                <div class="slds-listbox__option slds-listbox__option_plain slds-media slds-media_small slds-p-around_x-small">
+                                <div class="slds-listbox__option slds-listbox__option_plain slds-p-around_x-small wrc__option">
                                     <span class="slds-truncate" title={opt.label}>{opt.label}</span>
                                     <template lwc:if={opt.sublabel}>
-                                        <span class="wrc__sublabel slds-truncate">{opt.sublabel}</span>
+                                        <span class="wrc__sublabel">{opt.sublabel}</span>
                                     </template>
                                 </div>
                             </li>
