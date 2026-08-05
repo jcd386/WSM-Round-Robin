@@ -11,13 +11,13 @@ Built by [We Summit Mountains](https://wesummitmountains.com).
 Use the install URL for the latest released version:
 
 ```
-https://login.salesforce.com/packaging/installPackage.apexp?p0=INSTALL_04T_ID
+https://login.salesforce.com/packaging/installPackage.apexp?p0=04tTP000000kXqbYAE
 ```
 
 Or via CLI:
 
 ```bash
-sf package install --package INSTALL_04T_ID --target-org YOUR_ORG_ALIAS --wait 30
+sf package install --package 04tTP000000kXqbYAE --target-org YOUR_ORG_ALIAS --wait 30
 ```
 
 ### Option B: Source deploy (not upgradeable)

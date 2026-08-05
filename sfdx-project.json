@@ -17,6 +17,7 @@
     }
   ],
   "packageAliases": {
-    "WSM Round Robin": "0HoTP00000001H30AI"
+    "WSM Round Robin": "0HoTP00000001H30AI",
+    "WSM Round Robin@2.0.0-1": "04tTP000000kXqbYAE"
   }
 }
