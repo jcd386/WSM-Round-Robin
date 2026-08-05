@@ -34,12 +34,13 @@
     text-transform: uppercase;
     letter-spacing: 0.02em;
     color: #706e6b;
-    padding: 6px 8px;
+    padding: 6px 14px;
     border-bottom: 1px solid var(--slds-g-color-border-base-1, #dddbda);
 }
 
 .mt__table td {
-    padding: 6px 8px;
+    padding: 8px 14px;
+    white-space: nowrap;
     border-bottom: 1px solid var(--slds-g-color-border-base-1, #f3f2f2);
     vertical-align: middle;
 }
@@ -52,12 +53,12 @@
     width: 64px;
 }
 
-.mt__col-cap {
-    width: 110px;
+.mt__col-num {
+    width: 120px;
 }
 
 .mt__col-ooo {
-    width: 150px;
+    width: 160px;
 }
 
 .mt__col-order {
@@ -72,14 +73,13 @@
     border-radius: 4px;
 }
 
-.mt__capcur {
-    font-size: 0.75rem;
-    margin-right: 4px;
-    color: #444;
+.mt__capinput {
+    width: 56px;
 }
 
-.mt__capinput {
-    width: 44px;
+.mt__used {
+    color: #444;
+    font-variant-numeric: tabular-nums;
 }
 
 .mt__ooo-cell {
@@ -89,6 +89,15 @@
 .mt__oobtn {
     font-size: 0.75rem;
     padding: 2px 6px;
+    white-space: nowrap;
+    color: var(--slds-g-color-brand-base-40, #014486);
+}
+
+.mt__oobtn_set {
+    color: #444;
+}
+
+.mt__oobtn_set:hover {
     color: var(--slds-g-color-brand-base-40, #014486);
 }
 

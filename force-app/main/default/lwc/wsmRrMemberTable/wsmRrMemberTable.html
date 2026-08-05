@@ -21,9 +21,9 @@
                         <th>User</th>
                         <th class="mt__col-narrow">Active</th>
                         <template lwc:if={showWeight}><th class="mt__col-narrow">Weight</th></template>
-                        <template lwc:if={showCapacity}><th class="mt__col-cap">Cap / Current</th></template>
-                        <th class="mt__col-ooo">OOO</th>
-                        <th class="mt__col-narrow">Assigned</th>
+                        <template lwc:if={showCapacity}><th class="mt__col-narrow">{capHeader}</th></template>
+                        <th class="mt__col-num">{usedHeader}</th>
+                        <th class="mt__col-ooo">Out of office</th>
                         <template lwc:if={showOrder}><th class="mt__col-order">Order</th></template>
                         <th class="mt__col-narrow"></th>
                     </tr>
@@ -42,6 +42,8 @@
                                     variant="label-hidden"
                                     type="toggle"
                                     label="Active"
+                                    message-toggle-active=""
+                                    message-toggle-inactive=""
                                     checked={row.active}
                                     data-id={row.memberId}
                                     onchange={handleActiveToggle}
@@ -62,20 +64,21 @@
                             </template>
                             <template lwc:if={showCapacity}>
                                 <td>
-                                    <span class="mt__capcur">{row.periodCount}/{row.effectiveCapLabel}</span>
                                     <input
                                         type="number"
                                         class="mt__mininput mt__capinput"
                                         min="0"
-                                        placeholder="auto"
+                                        placeholder={row.capPlaceholder}
+                                        title="Max assignments per period for this member. Blank = group default, 0 = blocked."
                                         value={row.capOverride}
                                         data-id={row.memberId}
                                         onchange={handleCapChange}
                                     />
                                 </td>
                             </template>
+                            <td class="mt__col-num mt__used">{row.usedLabel}</td>
                             <td class="mt__ooo-cell">
-                                <button class="slds-button mt__oobtn" data-id={row.memberId} onclick={toggleOooPopover}>
+                                <button class={row.oooBtnClass} title={row.oooTitle} data-id={row.memberId} onclick={toggleOooPopover}>
                                     {row.oooLabel}
                                 </button>
                                 <template lwc:if={row.oooOpen}>
@@ -99,7 +102,6 @@
                                     </div>
                                 </template>
                             </td>
-                            <td>{row.periodCount}</td>
                             <template lwc:if={showOrder}>
                                 <td class="mt__order-cell">
                                     <button class="slds-button slds-button_icon" title="Move up" disabled={row.isFirst} data-id={row.memberId} onclick={moveUp}>

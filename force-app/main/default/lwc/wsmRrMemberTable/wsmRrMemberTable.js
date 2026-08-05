@@ -15,6 +15,7 @@ export default class WsmRrMemberTable extends LightningElement {
     @api groupId;
     @api algorithm;
     @api capacityMode;
+    @api period;
     @api members = [];
 
     pendingUserIds = [];
@@ -41,17 +42,37 @@ export default class WsmRrMemberTable extends LightningElement {
         return [...(this.members || [])].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
     }
 
+    get capHeader() {
+        const per = { Daily: 'day', Weekly: 'week', Monthly: 'month' }[this.period];
+        return per ? `Cap / ${per}` : 'Cap';
+    }
+
+    get usedHeader() {
+        return (
+            { Daily: 'Assigned today', Weekly: 'Assigned this week', Monthly: 'Assigned this month' }[
+                this.period
+            ] || 'Assigned'
+        );
+    }
+
     get rows() {
         const sorted = this.sortedMembers;
-        return sorted.map((m, idx) => ({
-            ...m,
-            rowClass: 'mt__row' + (m.active ? '' : ' mt__row_inactive'),
-            effectiveCapLabel: m.effectiveCap === null || m.effectiveCap === undefined ? '∞' : m.effectiveCap,
-            oooLabel: this.formatOoo(m),
-            oooOpen: this.openOooId === m.memberId,
-            isFirst: idx === 0,
-            isLast: idx === sorted.length - 1
-        }));
+        return sorted.map((m, idx) => {
+            const hasCap = m.effectiveCap !== null && m.effectiveCap !== undefined;
+            const capped = this.capacityMode === 'Period Cap' && hasCap;
+            return {
+                ...m,
+                rowClass: 'mt__row' + (m.active ? '' : ' mt__row_inactive'),
+                capPlaceholder: m.capOverride === null || m.capOverride === undefined ? (hasCap ? String(m.effectiveCap) : 'none') : '',
+                usedLabel: capped ? `${m.periodCount} of ${m.effectiveCap}` : String(m.periodCount || 0),
+                oooLabel: this.formatOoo(m),
+                oooTitle: this.formatOooTitle(m),
+                oooBtnClass: 'slds-button mt__oobtn' + (m.oooStart || m.oooReturn ? ' mt__oobtn_set' : ''),
+                oooOpen: this.openOooId === m.memberId,
+                isFirst: idx === 0,
+                isLast: idx === sorted.length - 1
+            };
+        });
     }
 
     get hasRows() {
@@ -74,9 +95,27 @@ export default class WsmRrMemberTable extends LightningElement {
         if (!m.oooStart && !m.oooReturn) {
             return 'Set OOO';
         }
-        const start = m.oooStart ? m.oooStart : '?';
-        const ret = m.oooReturn ? m.oooReturn : '?';
-        return `${start} → ${ret}`;
+        if (m.oooStart && m.oooReturn) {
+            return `${this.shortDate(m.oooStart)} – ${this.shortDate(m.oooReturn)}`;
+        }
+        return m.oooStart ? `From ${this.shortDate(m.oooStart)}` : `Until ${this.shortDate(m.oooReturn)}`;
+    }
+
+    formatOooTitle(m) {
+        if (!m.oooStart && !m.oooReturn) {
+            return 'Set an out-of-office range — the member is skipped while away';
+        }
+        const ret = m.oooReturn ? `eligible again ${this.shortDate(m.oooReturn)}` : 'no return date set';
+        return `Out of office — ${ret}. Click to edit.`;
+    }
+
+    // Parse 'YYYY-MM-DD' as local date parts; new Date(str) would shift a day in negative-UTC timezones.
+    shortDate(iso) {
+        const [y, mo, d] = String(iso).split('-').map(Number);
+        if (!y || !mo || !d) {
+            return iso;
+        }
+        return new Date(y, mo - 1, d).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
     }
 
     handleChipsChange(event) {
