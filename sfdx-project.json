@@ -1,18 +1,22 @@
 {
+  "name": "WSM Round Robin",
+  "namespace": "",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "64.0",
   "packageDirectories": [
     {
       "path": "force-app",
       "default": true,
       "package": "WSM Round Robin",
-      "versionNumber": "2.0.0.NEXT"
+      "versionName": "v2.0",
+      "versionNumber": "2.0.0.NEXT",
+      "versionDescription": "Round robin assignment engine with Strict Rotation, Weighted, and Least Assigned algorithms, period caps, OOO handling, fallback users, assignment audit log, and a full admin app.",
+      "unpackagedMetadata": {
+        "path": "unpackaged"
+      }
     }
   ],
-  "name": "WSM Round Robin",
-  "namespace": "",
-  "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "64.0",
-  "unpackagedMetadata": {
-    "path": "unpackaged"
-  },
-  "packageAliases": {}
+  "packageAliases": {
+    "WSM Round Robin": "0HoTP00000001H30AI"
+  }
 }
