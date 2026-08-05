@@ -35,8 +35,8 @@
                             <tr><th>Status</th><th>Meaning</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td><span class="wp__pill wp__pill_ok">ASSIGNED</span></td><td>Use the returned Assigned User Id.</td></tr>
-                            <tr><td><span class="wp__pill wp__pill_warn">FALLBACK</span></td><td>No member was eligible — the group's fallback user was used instead.</td></tr>
+                            <tr><td><span class="wp__pill wp__pill_ok">ASSIGNED</span></td><td>Set your record's OwnerId from the <strong>Owner Id</strong> output (it carries the assigned user — or the fallback queue on FALLBACK outcomes).</td></tr>
+                            <tr><td><span class="wp__pill wp__pill_warn">FALLBACK</span></td><td>No member was eligible — the group's fallback user or queue was used instead. Owner Id carries it either way.</td></tr>
                             <tr><td><span class="wp__pill wp__pill_err">NO_ELIGIBLE_MEMBERS</span></td><td>No member eligible and no fallback configured — route to a human queue.</td></tr>
                             <tr><td><span class="wp__pill wp__pill_err">GROUP_INACTIVE / GROUP_NOT_FOUND</span></td><td>Config problem — check the group in this app.</td></tr>
                             <tr><td><span class="wp__pill wp__pill_err">LOCK_TIMEOUT / ERROR</span></td><td>Transient — safe to retry once.</td></tr>

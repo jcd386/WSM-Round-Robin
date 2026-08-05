@@ -88,12 +88,20 @@ export default class WsmRrGroupEditor extends LightningElement {
         return this.working.defaultMemberCap;
     }
 
-    get fallbackUserId() {
-        return this.working.fallbackUserId;
+    get fallbackValue() {
+        return this.working.fallbackUserId || this.working.fallbackQueueId;
     }
 
-    get fallbackUserName() {
-        return this.working.fallbackUserName;
+    get fallbackLabel() {
+        if (this.working.fallbackUserId) {
+            return this.working.fallbackUserName;
+        }
+        if (this.working.fallbackQueueId) {
+            return this.working.fallbackQueueName
+                ? `${this.working.fallbackQueueName} (Queue)`
+                : this.working.fallbackQueueId;
+        }
+        return null;
     }
 
     get developerName() {
@@ -146,10 +154,24 @@ export default class WsmRrGroupEditor extends LightningElement {
     }
 
     handleFallbackSelect(event) {
+        const { targetId, name, targetType } = event.detail;
+        const isQueue = targetType === 'Queue';
         this.working = {
             ...this.working,
-            fallbackUserId: event.detail.userId,
-            fallbackUserName: event.detail.name
+            fallbackUserId: isQueue ? null : targetId,
+            fallbackUserName: isQueue ? null : name,
+            fallbackQueueId: isQueue ? targetId : null,
+            fallbackQueueName: isQueue ? name : null
+        };
+    }
+
+    handleFallbackClear() {
+        this.working = {
+            ...this.working,
+            fallbackUserId: null,
+            fallbackUserName: null,
+            fallbackQueueId: null,
+            fallbackQueueName: null
         };
     }
 

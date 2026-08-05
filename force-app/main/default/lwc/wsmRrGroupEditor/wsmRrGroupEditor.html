@@ -4,6 +4,9 @@
             <div class="ge__col">
                 <div class="slds-form-element">
                     <span class="slds-form-element__label">Algorithm</span>
+                    <lightning-helptext
+                        content="How the next person is picked. Strict Rotation: everyone takes turns in order, like going around a circle. Weighted: people with a bigger weight number get more turns. Least Assigned: whoever has received the fewest this period goes next."
+                    ></lightning-helptext>
                     <div class="slds-button-group ge__btngroup" role="group">
                         <template for:each={algorithmOptions} for:item="opt">
                             <button
@@ -20,6 +23,9 @@
                 <template lwc:if={isLeastAssigned}>
                     <div class="slds-form-element slds-m-top_small">
                         <span class="slds-form-element__label">Calibration for mid-period joiners</span>
+                        <lightning-helptext
+                            content="What happens when someone joins partway through a period. Median: they start in the middle of the pack, so they get a fair share. None: they start at zero, so the system may pile work on them to catch them up."
+                        ></lightning-helptext>
                         <div class="slds-button-group ge__btngroup" role="group">
                             <template for:each={calibrationOptions} for:item="opt">
                                 <button
@@ -38,6 +44,7 @@
                     <lightning-input
                         type="toggle"
                         label="Enforce a period cap"
+                        field-level-help="Give each person a maximum number of assignments per period. Once someone hits their max, they're skipped until the counter starts over."
                         checked={isCapacityEnabled}
                         onchange={handleCapacityToggle}
                     ></lightning-input>
@@ -48,6 +55,9 @@
                     <div class="ge__pair slds-m-top_x-small">
                         <div class="slds-form-element">
                             <span class="slds-form-element__label">Period</span>
+                            <lightning-helptext
+                                content="How often the counters go back to zero: every day at midnight, every week on Monday, or on the 1st of every month."
+                            ></lightning-helptext>
                             <div class="slds-button-group ge__btngroup" role="group">
                                 <template for:each={periodOptions} for:item="opt">
                                     <button
@@ -62,6 +72,7 @@
                         <lightning-input
                             type="number"
                             label="Default member cap"
+                            field-level-help="The most assignments one person can get in a period. You can give any person their own number on the Members tab — blank there means they use this default, and 0 means they never get assigned."
                             placeholder="Uncapped"
                             value={defaultMemberCap}
                             onchange={handleCapChange}
@@ -71,17 +82,26 @@
             </div>
 
             <div class="ge__col">
-                <c-wsm-rr-user-picker
-                    label="Fallback user"
-                    placeholder="Search users…"
-                    value={fallbackUserId}
-                    value-label={fallbackUserName}
-                    onselect={handleFallbackSelect}
-                ></c-wsm-rr-user-picker>
-                <p class="slds-form-element__help ge__caption">Used when no member is eligible. Leave blank to return "No Eligible Members".</p>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Fallback user or queue</span>
+                    <lightning-helptext
+                        content="The safety net. If every member is at their max, paused, or out of office, the assignment goes to this user or queue instead of failing. A queue only works on records queues can own, like Leads and Cases."
+                    ></lightning-helptext>
+                    <c-wsm-rr-fallback-picker
+                        placeholder="Search users and queues…"
+                        value={fallbackValue}
+                        value-label={fallbackLabel}
+                        onselect={handleFallbackSelect}
+                        onclear={handleFallbackClear}
+                    ></c-wsm-rr-fallback-picker>
+                    <p class="slds-form-element__help ge__caption">Leave blank to return "No Eligible Members" and let your flow decide.</p>
+                </div>
 
                 <div class="slds-form-element slds-m-top_small">
                     <span class="slds-form-element__label">Developer name</span>
+                    <lightning-helptext
+                        content="The group's permanent nickname. Flows use it to find this group, and it never changes — even if you rename the group later."
+                    ></lightning-helptext>
                     <template lwc:if={isSlugEditable}>
                         <lightning-input
                             variant="label-hidden"
@@ -104,6 +124,7 @@
                 <lightning-textarea
                     class="slds-m-top_small"
                     label="Description"
+                    field-level-help="Notes for your team about what this group is for. Only shown here."
                     value={description}
                     onchange={handleDescriptionChange}
                 ></lightning-textarea>

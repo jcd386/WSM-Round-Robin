@@ -15,10 +15,18 @@ public class WSM_RRResult {
     public Boolean isSuccess;
     public String status;
     public Id userId;
+    public Id queueId;
     public Id memberId;
     public Id groupId;
     public Id logId;
     public String message;
+
+    /** The Id to drop into OwnerId — the assigned user, or the fallback queue when no user was eligible. */
+    public Id ownerId {
+        get {
+            return userId != null ? userId : queueId;
+        }
+    }
 
     public WSM_RRResult() {
     }

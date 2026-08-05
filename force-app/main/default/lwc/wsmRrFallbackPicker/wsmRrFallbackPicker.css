@@ -1,0 +1,18 @@
+:host {
+    display: block;
+}
+
+.fp {
+    position: relative;
+}
+
+.fp__clear {
+    font-size: 0.6875rem;
+    padding: 0 4px;
+    margin-top: 2px;
+    color: var(--slds-g-color-neutral-base-50, #706e6b);
+}
+
+.fp__clear:hover {
+    color: var(--slds-g-color-brand-base-40, #014486);
+}

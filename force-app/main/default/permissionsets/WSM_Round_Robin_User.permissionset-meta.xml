@@ -68,6 +68,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>WSM_Round_Robin_Group__c.WSM_Fallback_Queue_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>WSM_Round_Robin_Group__c.WSM_Fallback_User__c</field>
         <readable>true</readable>
     </fieldPermissions>

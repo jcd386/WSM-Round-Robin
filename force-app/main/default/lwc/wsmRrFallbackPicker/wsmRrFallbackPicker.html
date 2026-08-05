@@ -1,0 +1,17 @@
+<template>
+    <div class="fp">
+        <c-wsm-rr-combobox
+            label={label}
+            placeholder={placeholder}
+            options={options}
+            value={singleValue}
+            value-label={singleLabel}
+            onfocusopen={handleFocusOpen}
+            onsearch={handleSearch}
+            onchange={handleChange}
+        ></c-wsm-rr-combobox>
+        <template lwc:if={hasSelection}>
+            <button class="slds-button fp__clear" onclick={handleClear}>Clear</button>
+        </template>
+    </div>
+</template>

@@ -445,4 +445,42 @@ private class WSM_RoundRobinEngine_Test {
             return groups;
         }
     }
+
+    @isTest
+    static void fallbackQueue_usedWhenNoUserFallbackAndPoolEmpty() {
+        Group queue = new Group(Name = 'RR Test Queue', DeveloperName = 'RR_Test_Queue', Type = 'Queue');
+        insert queue;
+        WSM_Round_Robin_Group__c grp = WSM_RoundRobinTestFactory.makeGroup('Queue Fallback Group', 'Strict Rotation');
+        grp.WSM_Fallback_Queue_Id__c = queue.Id;
+        insert grp;
+        WSM_Round_Robin_Member__c paused = WSM_RoundRobinTestFactory.makeMember(grp.Id, UserInfo.getUserId());
+        paused.WSM_Active__c = false;
+        insert paused;
+
+        WSM_RRResult result = new WSM_RoundRobinEngine().assign(new List<WSM_RRRequest>{ new WSM_RRRequest(grp.Id) })[0];
+
+        System.assertEquals(WSM_RRResult.STATUS_FALLBACK, result.status, 'Empty pool with a queue fallback must return FALLBACK.');
+        System.assertEquals(null, result.userId, 'Queue fallback must not populate userId.');
+        System.assertEquals(queue.Id, result.queueId, 'Queue fallback must return the queue Id.');
+        System.assertEquals(queue.Id, result.ownerId, 'ownerId must surface the queue when no user was assigned.');
+        WSM_Assignment_Log__c log = [SELECT WSM_Status__c, WSM_Detail__c FROM WSM_Assignment_Log__c WHERE WSM_Group__c = :grp.Id LIMIT 1];
+        System.assertEquals('Fallback', log.WSM_Status__c);
+        System.assert(log.WSM_Detail__c.contains(queue.Id), 'Log detail must record the fallback queue Id.');
+    }
+
+    @isTest
+    static void fallbackUser_winsOverFallbackQueue() {
+        Group queue = new Group(Name = 'RR Loser Queue', DeveloperName = 'RR_Loser_Queue', Type = 'Queue');
+        insert queue;
+        WSM_Round_Robin_Group__c grp = WSM_RoundRobinTestFactory.makeGroup('Both Fallbacks Group', 'Strict Rotation');
+        grp.WSM_Fallback_User__c = UserInfo.getUserId();
+        grp.WSM_Fallback_Queue_Id__c = queue.Id;
+        insert grp;
+
+        WSM_RRResult result = new WSM_RoundRobinEngine().assign(new List<WSM_RRRequest>{ new WSM_RRRequest(grp.Id) })[0];
+
+        System.assertEquals(WSM_RRResult.STATUS_FALLBACK, result.status);
+        System.assertEquals(UserInfo.getUserId(), result.userId, 'Fallback user takes precedence over the queue.');
+        System.assertEquals(null, result.queueId);
+    }
 }

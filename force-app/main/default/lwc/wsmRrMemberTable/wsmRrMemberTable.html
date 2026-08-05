@@ -19,12 +19,30 @@
                 <thead>
                     <tr>
                         <th>User</th>
-                        <th class="mt__col-narrow">Active</th>
-                        <template lwc:if={showWeight}><th class="mt__col-narrow">Weight</th></template>
-                        <template lwc:if={showCapacity}><th class="mt__col-narrow">{capHeader}</th></template>
-                        <th class="mt__col-num">{usedHeader}</th>
-                        <th class="mt__col-ooo">Out of office</th>
-                        <template lwc:if={showOrder}><th class="mt__col-order">Order</th></template>
+                        <th class="mt__col-narrow">Active
+                            <lightning-helptext class="mt__th-help" content="On means this person gets assignments. Off means they're skipped, but they keep their spot in the group."></lightning-helptext>
+                        </th>
+                        <template lwc:if={showWeight}>
+                            <th class="mt__col-narrow">Weight
+                                <lightning-helptext class="mt__th-help" content="Bigger number = more turns. Someone with weight 3 gets three assignments for every one that a weight-1 person gets."></lightning-helptext>
+                            </th>
+                        </template>
+                        <template lwc:if={showCapacity}>
+                            <th class="mt__col-narrow">{capHeader}
+                                <lightning-helptext class="mt__th-help" content="The most this person can get per period. Blank means they use the group default. 0 means they never get assigned."></lightning-helptext>
+                            </th>
+                        </template>
+                        <th class="mt__col-num">{usedHeader}
+                            <lightning-helptext class="mt__th-help" content="How many assignments this person has received so far this period."></lightning-helptext>
+                        </th>
+                        <th class="mt__col-ooo">Out of office
+                            <lightning-helptext class="mt__th-help" content="Away dates. The person is skipped starting on the first day and starts getting work again on the return day — with no pile-up waiting for them."></lightning-helptext>
+                        </th>
+                        <template lwc:if={showOrder}>
+                            <th class="mt__col-order">Order
+                                <lightning-helptext class="mt__th-help" content="The turn order. When two people are equally due, the one higher in this list goes first."></lightning-helptext>
+                            </th>
+                        </template>
                         <th class="mt__col-narrow"></th>
                     </tr>
                 </thead>

@@ -11,7 +11,7 @@ public inherited sharing virtual class WSM_RoundRobinSelector {
     public virtual List<WSM_Round_Robin_Group__c> lockGroups(Set<Id> groupIds) {
         return [
             SELECT Id, Name, WSM_Active__c, WSM_Algorithm__c, WSM_Capacity_Mode__c, WSM_Period__c,
-                   WSM_Default_Member_Cap__c, WSM_Fallback_User__c, WSM_Calibration__c, WSM_Developer_Name__c
+                   WSM_Default_Member_Cap__c, WSM_Fallback_User__c, WSM_Fallback_Queue_Id__c, WSM_Calibration__c, WSM_Developer_Name__c
             FROM WSM_Round_Robin_Group__c
             WHERE Id IN :groupIds
             FOR UPDATE
@@ -22,7 +22,7 @@ public inherited sharing virtual class WSM_RoundRobinSelector {
     public virtual List<WSM_Round_Robin_Group__c> queryGroups(Set<Id> groupIds) {
         return [
             SELECT Id, Name, WSM_Active__c, WSM_Algorithm__c, WSM_Capacity_Mode__c, WSM_Period__c,
-                   WSM_Default_Member_Cap__c, WSM_Fallback_User__c, WSM_Calibration__c, WSM_Developer_Name__c
+                   WSM_Default_Member_Cap__c, WSM_Fallback_User__c, WSM_Fallback_Queue_Id__c, WSM_Calibration__c, WSM_Developer_Name__c
             FROM WSM_Round_Robin_Group__c
             WHERE Id IN :groupIds
         ];

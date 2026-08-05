@@ -16,32 +16,12 @@ export default class WsmRrUserPicker extends LightningElement {
     @api placeholder = 'Search users…';
     @api required = false;
 
-    /** Single mode preset value: { userId, name }. */
-    _preset;
-    @api
-    get value() {
-        return this._preset ? this._preset.userId : null;
-    }
-    set value(val) {
-        if (val && this.presetName) {
-            this._preset = { userId: val, name: this.presetName };
-        }
-    }
+    /** Saved selection (single mode): id + display label, shown before options load. */
+    @api value;
+    @api valueLabel;
 
-    /** Optional preset label to show before options load (single mode only). */
-    presetName;
-    @api
-    get valueLabel() {
-        return this.presetName;
-    }
-    set valueLabel(val) {
-        this.presetName = val;
-        if (this._preset) {
-            this._preset = { ...this._preset, name: val };
-        } else if (val) {
-            this._preset = { userId: this.value, name: val };
-        }
-    }
+    /** In-session pick; wins over the saved value until the parent refreshes. */
+    _preset;
 
     options = [];
     chips = [];
@@ -53,7 +33,11 @@ export default class WsmRrUserPicker extends LightningElement {
     }
 
     get singleValue() {
-        return this._preset ? this._preset.userId : null;
+        return this._preset ? this._preset.userId : this.value;
+    }
+
+    get singleLabel() {
+        return this._preset ? this._preset.name : this.valueLabel;
     }
 
     get hasChips() {

@@ -48,6 +48,8 @@ public with sharing class WSM_RR_AdminController {
         @AuraEnabled public Integer defaultMemberCap;
         @AuraEnabled public Id fallbackUserId;
         @AuraEnabled public String fallbackUserName;
+        @AuraEnabled public String fallbackQueueId;
+        @AuraEnabled public String fallbackQueueName;
         @AuraEnabled public String calibration;
         @AuraEnabled public String description;
     }
@@ -80,6 +82,12 @@ public with sharing class WSM_RR_AdminController {
         @AuraEnabled public String context;
         @AuraEnabled public String assignedRecordId;
         @AuraEnabled public String detail;
+    }
+
+    public class FallbackOption {
+        @AuraEnabled public String targetId;
+        @AuraEnabled public String name;
+        @AuraEnabled public String targetType;
     }
 
     public class UserOption {
@@ -116,6 +124,7 @@ public with sharing class WSM_RR_AdminController {
         public String period;
         public Integer defaultMemberCap;
         public Id fallbackUserId;
+        public String fallbackQueueId;
         public String calibration;
         public String description;
         public Boolean active;
@@ -181,7 +190,7 @@ public with sharing class WSM_RR_AdminController {
             List<WSM_Round_Robin_Group__c> groups = [
                 SELECT Id, Name, WSM_Developer_Name__c, WSM_Active__c, WSM_Algorithm__c,
                        WSM_Capacity_Mode__c, WSM_Period__c, WSM_Default_Member_Cap__c,
-                       WSM_Fallback_User__c, WSM_Fallback_User__r.Name, WSM_Calibration__c,
+                       WSM_Fallback_User__c, WSM_Fallback_User__r.Name, WSM_Fallback_Queue_Id__c, WSM_Calibration__c,
                        WSM_Description__c
                 FROM WSM_Round_Robin_Group__c
                 WHERE Id = :groupId
@@ -249,6 +258,11 @@ public with sharing class WSM_RR_AdminController {
             info.defaultMemberCap = g.WSM_Default_Member_Cap__c != null ? g.WSM_Default_Member_Cap__c.intValue() : null;
             info.fallbackUserId = g.WSM_Fallback_User__c;
             info.fallbackUserName = g.WSM_Fallback_User__c != null ? g.WSM_Fallback_User__r.Name : null;
+            info.fallbackQueueId = g.WSM_Fallback_Queue_Id__c;
+            if (String.isNotBlank(g.WSM_Fallback_Queue_Id__c)) {
+                List<Group> queues = [SELECT Name FROM Group WHERE Id = :g.WSM_Fallback_Queue_Id__c LIMIT 1];
+                info.fallbackQueueName = queues.isEmpty() ? null : queues[0].Name;
+            }
             info.calibration = g.WSM_Calibration__c;
             info.description = g.WSM_Description__c;
 
@@ -310,6 +324,7 @@ public with sharing class WSM_RR_AdminController {
             g.WSM_Period__c = input.period;
             g.WSM_Default_Member_Cap__c = input.defaultMemberCap;
             g.WSM_Fallback_User__c = input.fallbackUserId;
+            g.WSM_Fallback_Queue_Id__c = input.fallbackQueueId;
             g.WSM_Calibration__c = input.calibration;
             g.WSM_Description__c = input.description;
             g.WSM_Active__c = input.active == null ? true : input.active;
@@ -350,6 +365,38 @@ public with sharing class WSM_RR_AdminController {
     // ------------------------------------------------------------------
     // Members
     // ------------------------------------------------------------------
+
+
+    @AuraEnabled
+    public static List<FallbackOption> searchFallbackTargets(String term) {
+        try {
+            List<FallbackOption> options = new List<FallbackOption>();
+            String pattern = '%' + (term == null ? '' : String.escapeSingleQuotes(term)) + '%';
+            List<User> users = String.isBlank(term)
+                ? [SELECT Id, Name FROM User WHERE IsActive = true ORDER BY Name LIMIT 10]
+                : [SELECT Id, Name FROM User WHERE IsActive = true AND Name LIKE :pattern ORDER BY Name LIMIT 10];
+            for (User u : users) {
+                FallbackOption o = new FallbackOption();
+                o.targetId = u.Id;
+                o.name = u.Name;
+                o.targetType = 'User';
+                options.add(o);
+            }
+            List<Group> queues = String.isBlank(term)
+                ? [SELECT Id, Name FROM Group WHERE Type = 'Queue' ORDER BY Name LIMIT 10]
+                : [SELECT Id, Name FROM Group WHERE Type = 'Queue' AND Name LIKE :pattern ORDER BY Name LIMIT 10];
+            for (Group q : queues) {
+                FallbackOption o = new FallbackOption();
+                o.targetId = q.Id;
+                o.name = q.Name;
+                o.targetType = 'Queue';
+                options.add(o);
+            }
+            return options;
+        } catch (Exception e) {
+            throw friendlyError(e.getMessage());
+        }
+    }
 
     @AuraEnabled
     public static List<UserOption> searchUsers(String term, Id groupId) {

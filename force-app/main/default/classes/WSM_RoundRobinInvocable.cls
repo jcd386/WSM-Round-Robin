@@ -16,8 +16,14 @@ public with sharing class WSM_RoundRobinInvocable {
     }
 
     public class Result {
-        @InvocableVariable(label='User Id' description='User this request was assigned to (member user, or the group fallback user).')
+        @InvocableVariable(label='User Id' description='User this request was assigned to (member user, or the group fallback user). Blank when a fallback queue was used.')
         public Id userId;
+
+        @InvocableVariable(label='Queue Id' description='Fallback queue that received this request. Only set on FALLBACK outcomes for groups configured with a fallback queue.')
+        public Id queueId;
+
+        @InvocableVariable(label='Owner Id' description='The Id to put in OwnerId: the assigned user, or the fallback queue when no user was eligible. Queues can only own queue-enabled objects like Leads and Cases.')
+        public Id ownerId;
 
         @InvocableVariable(label='Member Id' description='Round Robin Member record that was selected. Blank on fallback/error outcomes.')
         public Id memberId;
@@ -56,6 +62,8 @@ public with sharing class WSM_RoundRobinInvocable {
         for (WSM_RRResult sr : serviceResults) {
             Result result = new Result();
             result.userId = sr.userId;
+            result.queueId = sr.queueId;
+            result.ownerId = sr.ownerId;
             result.memberId = sr.memberId;
             result.groupId = sr.groupId;
             result.status = sr.status;

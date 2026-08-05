@@ -28,6 +28,9 @@
 
                     <div class="slds-form-element">
                         <span class="slds-form-element__label">Algorithm</span>
+                        <lightning-helptext
+                            content="How the next person is picked. Strict Rotation: everyone takes turns in order, like going around a circle. Weighted: people with a bigger weight number get more turns. Least Assigned: whoever has received the fewest this period goes next."
+                        ></lightning-helptext>
                         <div class="slds-button-group wiz__btngroup" role="group">
                             <template for:each={algorithmOptions} for:item="opt">
                                 <button
@@ -44,6 +47,7 @@
                     <lightning-input
                         type="toggle"
                         label="Enforce a period cap"
+                        field-level-help="Give each person a maximum number of assignments per period. Once someone hits their max, they're skipped until the counter starts over."
                         checked={isCapacityEnabled}
                         onchange={handleCapacityToggle}
                     ></lightning-input>
@@ -52,6 +56,9 @@
                         <div class="wiz__pair">
                             <div class="slds-form-element">
                                 <span class="slds-form-element__label">Period</span>
+                                <lightning-helptext
+                                    content="How often the counters go back to zero: every day at midnight, every week on Monday, or on the 1st of every month."
+                                ></lightning-helptext>
                                 <div class="slds-button-group wiz__btngroup" role="group">
                                     <template for:each={periodOptions} for:item="opt">
                                         <button
@@ -66,6 +73,7 @@
                             <lightning-input
                                 type="number"
                                 label="Default member cap"
+                                field-level-help="The most assignments one person can get in a period. You can give any person their own number later on the Members tab. 0 means blocked."
                                 placeholder="Uncapped"
                                 value={basics.defaultMemberCap}
                                 onchange={handleCapChange}
@@ -73,13 +81,19 @@
                         </div>
                     </template>
 
-                    <c-wsm-rr-user-picker
-                        label="Fallback user (optional)"
-                        placeholder="Search users…"
-                        value={basics.fallbackUserId}
-                        value-label={basics.fallbackUserName}
-                        onselect={handleFallbackSelect}
-                    ></c-wsm-rr-user-picker>
+                    <div class="slds-form-element">
+                        <span class="slds-form-element__label">Fallback user or queue (optional)</span>
+                        <lightning-helptext
+                            content="The safety net. If every member is at their max, paused, or out of office, the assignment goes to this user or queue instead of failing. A queue only works on records queues can own, like Leads and Cases."
+                        ></lightning-helptext>
+                        <c-wsm-rr-fallback-picker
+                            placeholder="Search users and queues…"
+                            value={fallbackValue}
+                            value-label={fallbackLabel}
+                            onselect={handleFallbackSelect}
+                            onclear={handleFallbackClear}
+                        ></c-wsm-rr-fallback-picker>
+                    </div>
                 </div>
             </template>
 
@@ -126,12 +140,13 @@
                         <dt>Name</dt><dd>{basics.name}</dd>
                         <dt>Algorithm</dt><dd>{basics.algorithm} — {algorithmCaption}</dd>
                         <dt>Capacity</dt><dd>{capacitySummary}</dd>
-                        <dt>Fallback user</dt><dd>{fallbackSummary}</dd>
+                        <dt>Fallback</dt><dd>{fallbackSummary}</dd>
                         <dt>Members</dt><dd>{memberCountSummary}</dd>
                     </dl>
                     <lightning-input
                         type="toggle"
                         label="Activate this group"
+                        field-level-help="Active groups hand out assignments. You can flip this off anytime to pause the whole group."
                         checked={activate}
                         onchange={handleActivateToggle}
                     ></lightning-input>

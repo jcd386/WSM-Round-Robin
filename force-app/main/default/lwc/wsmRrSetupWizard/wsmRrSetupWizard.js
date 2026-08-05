@@ -32,7 +32,9 @@ export default class WsmRrSetupWizard extends LightningElement {
         period: 'Daily',
         defaultMemberCap: null,
         fallbackUserId: null,
-        fallbackUserName: null
+        fallbackUserName: null,
+        fallbackQueueId: null,
+        fallbackQueueName: null
     };
     pendingMembers = [];
     activate = true;
@@ -147,7 +149,27 @@ export default class WsmRrSetupWizard extends LightningElement {
     }
 
     get fallbackSummary() {
-        return this.basics.fallbackUserName || 'None set';
+        if (this.basics.fallbackUserName) {
+            return this.basics.fallbackUserName;
+        }
+        if (this.basics.fallbackQueueName) {
+            return this.basics.fallbackQueueName + ' (Queue)';
+        }
+        return 'None set';
+    }
+
+    get fallbackValue() {
+        return this.basics.fallbackUserId || this.basics.fallbackQueueId;
+    }
+
+    get fallbackLabel() {
+        if (this.basics.fallbackUserId) {
+            return this.basics.fallbackUserName;
+        }
+        if (this.basics.fallbackQueueId) {
+            return this.basics.fallbackQueueName + ' (Queue)';
+        }
+        return null;
     }
 
     get memberCountSummary() {
@@ -191,10 +213,24 @@ export default class WsmRrSetupWizard extends LightningElement {
     }
 
     handleFallbackSelect(event) {
+        const { targetId, name, targetType } = event.detail;
+        const isQueue = targetType === 'Queue';
         this.basics = {
             ...this.basics,
-            fallbackUserId: event.detail.userId,
-            fallbackUserName: event.detail.name
+            fallbackUserId: isQueue ? null : targetId,
+            fallbackUserName: isQueue ? null : name,
+            fallbackQueueId: isQueue ? targetId : null,
+            fallbackQueueName: isQueue ? name : null
+        };
+    }
+
+    handleFallbackClear() {
+        this.basics = {
+            ...this.basics,
+            fallbackUserId: null,
+            fallbackUserName: null,
+            fallbackQueueId: null,
+            fallbackQueueName: null
         };
     }
 
@@ -253,6 +289,7 @@ export default class WsmRrSetupWizard extends LightningElement {
                 period: this.basics.period,
                 defaultMemberCap: this.basics.defaultMemberCap,
                 fallbackUserId: this.basics.fallbackUserId,
+                fallbackQueueId: this.basics.fallbackQueueId,
                 calibration: 'Median',
                 description: ''
             });

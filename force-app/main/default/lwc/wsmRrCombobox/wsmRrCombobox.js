@@ -35,6 +35,22 @@ export default class WsmRrCombobox extends LightningElement {
     @track searchTerm = '';
     isOpen = false;
 
+    /**
+     * Display label for a preselected value whose option may not be loaded yet
+     * (options load lazily on focus). Lets parents show a saved selection.
+     */
+    _valueLabel;
+    @api
+    get valueLabel() {
+        return this._valueLabel;
+    }
+    set valueLabel(v) {
+        this._valueLabel = v;
+        if (v && !this.isOpen) {
+            this.searchTerm = v;
+        }
+    }
+
     syncLabelFromValue() {
         if (this._value == null) {
             return;

@@ -307,6 +307,14 @@ public without sharing class WSM_RoundRobinEngine {
                 result.message = 'No eligible members; routed to the fallback user.';
                 finalize(i, result, WSM_AssignmentLogger.buildLog(gid, null, groupRecord.WSM_Fallback_User__c,
                     groupRecord.WSM_Algorithm__c, WSM_AssignmentLogger.LOG_STATUS_FALLBACK, req, skipSummary));
+            } else if (String.isNotBlank(groupRecord.WSM_Fallback_Queue_Id__c)) {
+                WSM_RRResult result = new WSM_RRResult(true, WSM_RRResult.STATUS_FALLBACK, gid);
+                result.queueId = groupRecord.WSM_Fallback_Queue_Id__c;
+                result.message = 'No eligible members; routed to the fallback queue.';
+                String queueDetail = 'Routed to fallback queue ' + groupRecord.WSM_Fallback_Queue_Id__c
+                    + (skipSummary == null ? '' : '. ' + skipSummary);
+                finalize(i, result, WSM_AssignmentLogger.buildLog(gid, null, null,
+                    groupRecord.WSM_Algorithm__c, WSM_AssignmentLogger.LOG_STATUS_FALLBACK, req, queueDetail));
             } else {
                 WSM_RRResult result = errorResult(WSM_RRResult.STATUS_NO_ELIGIBLE_MEMBERS, gid,
                     'No eligible members and no fallback user configured.');
