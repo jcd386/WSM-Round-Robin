@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Calibration__c</fullName>
+    <description>How new or returning members are seeded into Least Assigned counting mid-period. Median starts them at the pool's median count to avoid a catch-up flood; None starts them at zero.</description>
+    <inlineHelpText>Prevents new members from being flooded with assignments to "catch up" under Least Assigned.</inlineHelpText>
+    <label>Calibration</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Median</fullName>
+                <default>true</default>
+                <label>Median</label>
+            </value>
+            <value>
+                <fullName>None</fullName>
+                <default>false</default>
+                <label>None</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

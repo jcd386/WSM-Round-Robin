@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Default_Member_Cap__c</fullName>
+    <description>Default maximum assignments per period for members in this group when Capacity Mode is Period Cap. Blank means uncapped; a member's own Cap Override takes precedence.</description>
+    <inlineHelpText>Per-period assignment ceiling applied to members without their own cap override. Leave blank for uncapped.</inlineHelpText>
+    <label>Default Member Cap</label>
+    <precision>5</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+</CustomField>

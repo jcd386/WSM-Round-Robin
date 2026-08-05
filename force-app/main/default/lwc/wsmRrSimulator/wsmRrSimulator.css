@@ -1,0 +1,89 @@
+:host {
+    display: block;
+}
+
+.sim__subtitle {
+    color: rgba(255, 255, 255, 0.85);
+    margin-top: 2px;
+}
+
+.sim__controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--slds-g-color-border-base-1, #e5e5e5);
+}
+
+.sim__resultcard {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    background: var(--slds-g-color-neutral-base-98, #fafaf9);
+}
+
+.sim__resultcard_ok {
+    background: #e6f5ea;
+}
+
+.sim__resultcard_warn {
+    background: #fef2cd;
+}
+
+.sim__resulticon {
+    flex: 0 0 auto;
+    margin-top: 2px;
+}
+
+.sim__resulttitle {
+    font-weight: 700;
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+.sim__resultdetail {
+    font-size: 0.75rem;
+    color: #444;
+    margin: 4px 0 0;
+}
+
+.sim__committed {
+    font-size: 0.75rem;
+    margin: 4px 0 0;
+}
+
+.sim__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+}
+
+.sim__table th {
+    text-align: left;
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    color: #706e6b;
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--slds-g-color-border-base-1, #dddbda);
+}
+
+.sim__table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--slds-g-color-border-base-1, #f3f2f2);
+}
+
+.sim__col-elig {
+    width: 70px;
+    text-align: center;
+}
+
+.sim__empty {
+    text-align: center;
+    padding: 24px 0;
+    font-size: 0.8125rem;
+}

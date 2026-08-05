@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Detail__c</fullName>
+    <description>Skip-reason summary or error detail for this attempt — why members were ineligible, or what went wrong.</description>
+    <inlineHelpText>Why members were skipped, or error detail if this attempt failed.</inlineHelpText>
+    <label>Detail</label>
+    <length>2000</length>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>3</visibleLines>
+</CustomField>

@@ -1,0 +1,122 @@
+<template>
+    <div class="ge">
+        <div class="ge__grid">
+            <div class="ge__col">
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Algorithm</span>
+                    <div class="slds-button-group ge__btngroup" role="group">
+                        <template for:each={algorithmOptions} for:item="opt">
+                            <button
+                                key={opt.value}
+                                class={opt.buttonClass}
+                                data-value={opt.value}
+                                onclick={handleAlgorithmClick}
+                            >{opt.label}</button>
+                        </template>
+                    </div>
+                    <p class="slds-form-element__help ge__caption">{algorithmCaption}</p>
+                </div>
+
+                <template lwc:if={isLeastAssigned}>
+                    <div class="slds-form-element slds-m-top_small">
+                        <span class="slds-form-element__label">Calibration for mid-period joiners</span>
+                        <div class="slds-button-group ge__btngroup" role="group">
+                            <template for:each={calibrationOptions} for:item="opt">
+                                <button
+                                    key={opt.value}
+                                    class={opt.buttonClass}
+                                    data-value={opt.value}
+                                    onclick={handleCalibrationClick}
+                                >{opt.label}</button>
+                            </template>
+                        </div>
+                        <p class="slds-form-element__help ge__caption">{calibrationCaption}</p>
+                    </div>
+                </template>
+
+                <div class="slds-form-element slds-m-top_small">
+                    <lightning-input
+                        type="toggle"
+                        label="Enforce a period cap"
+                        checked={isCapacityEnabled}
+                        onchange={handleCapacityToggle}
+                    ></lightning-input>
+                    <p class="slds-form-element__help ge__caption">Blocks assignments once a member hits their cap for the period, until it resets.</p>
+                </div>
+
+                <template lwc:if={isCapacityEnabled}>
+                    <div class="ge__pair slds-m-top_x-small">
+                        <div class="slds-form-element">
+                            <span class="slds-form-element__label">Period</span>
+                            <div class="slds-button-group ge__btngroup" role="group">
+                                <template for:each={periodOptions} for:item="opt">
+                                    <button
+                                        key={opt.value}
+                                        class={opt.buttonClass}
+                                        data-value={opt.value}
+                                        onclick={handlePeriodClick}
+                                    >{opt.label}</button>
+                                </template>
+                            </div>
+                        </div>
+                        <lightning-input
+                            type="number"
+                            label="Default member cap"
+                            placeholder="Uncapped"
+                            value={defaultMemberCap}
+                            onchange={handleCapChange}
+                        ></lightning-input>
+                    </div>
+                </template>
+            </div>
+
+            <div class="ge__col">
+                <c-wsm-rr-user-picker
+                    label="Fallback user"
+                    placeholder="Search users…"
+                    value={fallbackUserId}
+                    value-label={fallbackUserName}
+                    onselect={handleFallbackSelect}
+                ></c-wsm-rr-user-picker>
+                <p class="slds-form-element__help ge__caption">Used when no member is eligible. Leave blank to return "No Eligible Members".</p>
+
+                <div class="slds-form-element slds-m-top_small">
+                    <span class="slds-form-element__label">Developer name</span>
+                    <template lwc:if={isSlugEditable}>
+                        <lightning-input
+                            variant="label-hidden"
+                            value={developerName}
+                            placeholder="Auto-generated from name"
+                            onchange={handleDevNameChange}
+                        ></lightning-input>
+                    </template>
+                    <template lwc:if={isSlugReadOnly}>
+                        <div class="ge__devname">
+                            <code class="ge__devname-code">{developerName}</code>
+                            <button class="slds-button slds-button_icon" title="Copy" onclick={handleCopyDevName}>
+                                <lightning-icon icon-name="utility:copy" size="x-small"></lightning-icon>
+                            </button>
+                        </div>
+                    </template>
+                    <p class="slds-form-element__help ge__caption">This is the stable key flows reference — set once, then locked.</p>
+                </div>
+
+                <lightning-textarea
+                    class="slds-m-top_small"
+                    label="Description"
+                    value={description}
+                    onchange={handleDescriptionChange}
+                ></lightning-textarea>
+            </div>
+        </div>
+
+        <div class="ge__footer">
+            <template lwc:if={isDirty}>
+                <span class="slds-text-color_weak ge__unsaved">Unsaved changes</span>
+            </template>
+            <button class="slds-button slds-button_brand" disabled={isSaveDisabled} onclick={handleSave}>
+                Save
+            </button>
+        </div>
+    </div>
+</template>

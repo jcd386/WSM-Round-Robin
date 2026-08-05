@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Assigned_User__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>The user the record was ultimately routed to — the member's user, or the group's fallback user.</description>
+    <inlineHelpText>Final assignee for this routing decision.</inlineHelpText>
+    <label>Assigned User</label>
+    <referenceTo>User</referenceTo>
+    <relationshipLabel>Assignment Logs (Assigned)</relationshipLabel>
+    <relationshipName>Assignment_Logs_Assigned</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

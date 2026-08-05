@@ -1,0 +1,21 @@
+<template>
+    <ul class="grl">
+        <template for:each={rows} for:item="row">
+            <li key={row.groupId} class={row.rowClass} data-id={row.groupId} onclick={handleClick}>
+                <div class="grl__top">
+                    <span class={row.dotClass} title={row.activeTitle}></span>
+                    <span class="grl__name slds-truncate" title={row.name}>{row.name}</span>
+                    <span class="grl__algo" title={row.algorithm}>{row.algoAbbrev}</span>
+                </div>
+                <div class="grl__meta">
+                    <span>{row.memberCount} members</span>
+                    <span class="grl__dot-sep">·</span>
+                    <span>{row.assignments30d} in 30d</span>
+                </div>
+            </li>
+        </template>
+        <template lwc:if={isEmpty}>
+            <li class="grl__empty slds-text-color_weak">No groups match "{filterTerm}"</li>
+        </template>
+    </ul>
+</template>

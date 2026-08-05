@@ -1,0 +1,29 @@
+<template>
+    <div class="help">
+        <lightning-accordion active-section-name={activeSection} onsectiontoggle={handleToggle}>
+            <lightning-accordion-section name="what" label="What is Round Robin?">
+                <p class="help__text">Automatically hands each new record to the next eligible person in a group — evenly, by weight, or by whoever has the fewest so far. No more manual assigning.</p>
+            </lightning-accordion-section>
+
+            <lightning-accordion-section name="quickstart" label="Quick start">
+                <ol class="help__steps">
+                    <li>Click <strong>New Group</strong>, name it, and pick an algorithm.</li>
+                    <li>Add members — search and select from the picker.</li>
+                    <li>Open the <strong>Wiring</strong> tab and wire it into a Flow.</li>
+                </ol>
+            </lightning-accordion-section>
+
+            <lightning-accordion-section name="wiring" label="Wire into a Flow">
+                <ol class="help__steps">
+                    <li>Add the <strong>Round Robin: Get Assignee</strong> action to your Flow.</li>
+                    <li>Set its <strong>Group Developer Name</strong> input (copy it from the group's Wiring tab).</li>
+                    <li>Branch on the <strong>Status</strong> output — ASSIGNED, FALLBACK, or NO_ELIGIBLE_MEMBERS.</li>
+                </ol>
+            </lightning-accordion-section>
+
+            <lightning-accordion-section name="perms" label="Permissions">
+                <p class="help__text">Any user or automation user whose Flow calls a group needs the <strong>WSM_Round_Robin_User</strong> permission set. Admins managing groups need <strong>WSM_Round_Robin_Admin</strong>.</p>
+            </lightning-accordion-section>
+        </lightning-accordion>
+    </div>
+</template>

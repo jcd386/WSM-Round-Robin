@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Group__c</fullName>
+    <description>The Round Robin Group this seat belongs to. Deleting the group deletes its members.</description>
+    <inlineHelpText>Parent group this member rotates within.</inlineHelpText>
+    <label>Group</label>
+    <referenceTo>WSM_Round_Robin_Group__c</referenceTo>
+    <relationshipLabel>Members</relationshipLabel>
+    <relationshipName>Members</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>

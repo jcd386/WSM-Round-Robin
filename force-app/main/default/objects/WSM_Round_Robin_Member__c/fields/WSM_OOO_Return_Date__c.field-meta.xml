@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_OOO_Return_Date__c</fullName>
+    <description>Date this member becomes eligible again. The return day itself is eligible.</description>
+    <inlineHelpText>Member becomes eligible again on this date (inclusive).</inlineHelpText>
+    <label>Out of Office Return</label>
+    <required>false</required>
+    <type>Date</type>
+</CustomField>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>64.0</apiVersion>
+    <isExposed>false</isExposed>
+    <masterLabel>WSM Round Robin Utilities (Service)</masterLabel>
+    <description>JS-only shared helpers (error reduction, debounce, relative time, slug) — imported, never rendered.</description>
+</LightningComponentBundle>

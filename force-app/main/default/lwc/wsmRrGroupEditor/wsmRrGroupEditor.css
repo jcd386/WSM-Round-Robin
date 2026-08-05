@@ -1,0 +1,71 @@
+:host {
+    display: block;
+}
+
+.ge {
+    padding: 12px;
+}
+
+.ge__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media (max-width: 900px) {
+    .ge__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.ge__col {
+    display: flex;
+    flex-direction: column;
+}
+
+.ge__btngroup {
+    display: flex;
+}
+
+.ge__btn {
+    flex: 1 1 auto;
+}
+
+.ge__caption {
+    margin-top: 4px;
+    font-size: 0.6875rem;
+}
+
+.ge__pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    align-items: end;
+}
+
+.ge__devname {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ge__devname-code {
+    background: var(--slds-g-color-neutral-base-95, #f3f3f3);
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 0.75rem;
+}
+
+.ge__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 8px;
+    border-top: 1px solid var(--slds-g-color-border-base-1, #e5e5e5);
+}
+
+.ge__unsaved {
+    font-size: 0.75rem;
+}

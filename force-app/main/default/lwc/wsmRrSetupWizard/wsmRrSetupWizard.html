@@ -1,0 +1,159 @@
+<template>
+    <template lwc:if={isModal}>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <section class={containerClass} role="dialog">
+        <header class="wiz__header">
+            <div class="wiz__headertext">
+                <h1 class={titleClass}>{title}</h1>
+                <p class={stepIndicatorClass}>{stepIndicator}</p>
+            </div>
+            <template lwc:if={isModal}>
+                <button class="slds-button slds-button_icon wiz__close" title="Close" onclick={handleCancel}>
+                    <lightning-icon icon-name="utility:close" size="small" variant={closeIconVariant}></lightning-icon>
+                </button>
+            </template>
+        </header>
+
+        <div class="wiz__body">
+            <template lwc:if={isStep1}>
+                <div class="wiz__grid">
+                    <lightning-input
+                        label="Group name"
+                        required
+                        value={basics.name}
+                        onchange={handleNameChange}
+                    ></lightning-input>
+
+                    <div class="slds-form-element">
+                        <span class="slds-form-element__label">Algorithm</span>
+                        <div class="slds-button-group wiz__btngroup" role="group">
+                            <template for:each={algorithmOptions} for:item="opt">
+                                <button
+                                    key={opt.value}
+                                    class={opt.buttonClass}
+                                    data-value={opt.value}
+                                    onclick={handleAlgorithmClick}
+                                >{opt.label}</button>
+                            </template>
+                        </div>
+                        <p class="slds-form-element__help wiz__caption">{algorithmCaption}</p>
+                    </div>
+
+                    <lightning-input
+                        type="toggle"
+                        label="Enforce a period cap"
+                        checked={isCapacityEnabled}
+                        onchange={handleCapacityToggle}
+                    ></lightning-input>
+
+                    <template lwc:if={isCapacityEnabled}>
+                        <div class="wiz__pair">
+                            <div class="slds-form-element">
+                                <span class="slds-form-element__label">Period</span>
+                                <div class="slds-button-group wiz__btngroup" role="group">
+                                    <template for:each={periodOptions} for:item="opt">
+                                        <button
+                                            key={opt.value}
+                                            class={opt.buttonClass}
+                                            data-value={opt.value}
+                                            onclick={handlePeriodClick}
+                                        >{opt.label}</button>
+                                    </template>
+                                </div>
+                            </div>
+                            <lightning-input
+                                type="number"
+                                label="Default member cap"
+                                placeholder="Uncapped"
+                                value={basics.defaultMemberCap}
+                                onchange={handleCapChange}
+                            ></lightning-input>
+                        </div>
+                    </template>
+
+                    <c-wsm-rr-user-picker
+                        label="Fallback user (optional)"
+                        placeholder="Search users…"
+                        value={basics.fallbackUserId}
+                        value-label={basics.fallbackUserName}
+                        onselect={handleFallbackSelect}
+                    ></c-wsm-rr-user-picker>
+                </div>
+            </template>
+
+            <template lwc:if={isStep2}>
+                <div class="wiz__step2">
+                    <c-wsm-rr-user-picker
+                        multi
+                        placeholder="Search users to add…"
+                        onchipschange={handleChipsChange}
+                    ></c-wsm-rr-user-picker>
+
+                    <template lwc:if={hasPendingMembers}>
+                        <ul class="wiz__memberlist">
+                            <template for:each={pendingMembers} for:item="m">
+                                <li key={m.userId} class="wiz__memberrow">
+                                    <span class="slds-truncate wiz__membername">{m.name}</span>
+                                    <template lwc:if={isWeighted}>
+                                        <input
+                                            type="number"
+                                            class="wiz__weightinput"
+                                            min="1"
+                                            max="100"
+                                            value={m.weight}
+                                            data-id={m.userId}
+                                            onchange={handleWeightChange}
+                                        />
+                                    </template>
+                                    <button class="slds-button slds-button_icon" title="Remove" data-id={m.userId} onclick={handleRemoveMember}>
+                                        <lightning-icon icon-name="utility:close" size="x-small"></lightning-icon>
+                                    </button>
+                                </li>
+                            </template>
+                        </ul>
+                    </template>
+                    <template lwc:if={hasNoPendingMembers}>
+                        <p class="slds-text-color_weak wiz__empty">No members added yet — search above.</p>
+                    </template>
+                </div>
+            </template>
+
+            <template lwc:if={isStep3}>
+                <div class="wiz__review">
+                    <dl class="wiz__summary">
+                        <dt>Name</dt><dd>{basics.name}</dd>
+                        <dt>Algorithm</dt><dd>{basics.algorithm} — {algorithmCaption}</dd>
+                        <dt>Capacity</dt><dd>{capacitySummary}</dd>
+                        <dt>Fallback user</dt><dd>{fallbackSummary}</dd>
+                        <dt>Members</dt><dd>{memberCountSummary}</dd>
+                    </dl>
+                    <lightning-input
+                        type="toggle"
+                        label="Activate this group"
+                        checked={activate}
+                        onchange={handleActivateToggle}
+                    ></lightning-input>
+                    <p class="slds-form-element__help wiz__caption">You can also flip this later from the group header.</p>
+                </div>
+            </template>
+        </div>
+
+        <footer class="wiz__footer">
+            <template lwc:if={isModal}>
+                <button class="slds-button slds-button_neutral wiz__cancel" onclick={handleCancel}>Cancel</button>
+            </template>
+            <span class="wiz__spacer"></span>
+            <button class="slds-button slds-button_neutral" disabled={isFirstStep} onclick={handleBack}>Back</button>
+            <template lwc:if={isLastStep}>
+                <button class="slds-button slds-button_brand" disabled={isFinishDisabled} onclick={handleFinish}>
+                    {finishLabel}
+                </button>
+            </template>
+            <template lwc:if={isNotLastStep}>
+                <button class="slds-button slds-button_brand" disabled={isNextDisabled} onclick={handleNext}>Next</button>
+            </template>
+        </footer>
+    </section>
+</template>

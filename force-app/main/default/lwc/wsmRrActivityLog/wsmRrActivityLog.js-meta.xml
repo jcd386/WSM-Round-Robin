@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>64.0</apiVersion>
+    <isExposed>false</isExposed>
+    <masterLabel>WSM Round Robin Activity Log</masterLabel>
+    <description>Activity tab — per-member period bars, last-25 assignment log, Reset Counters.</description>
+</LightningComponentBundle>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>CUST_NAME</field>
+    </columns>
+    <columns>
+        <field>WSM_Assignment_Log__c.WSM_Assigned_User__c</field>
+    </columns>
+    <columns>
+        <field>WSM_Assignment_Log__c.WSM_Status__c</field>
+    </columns>
+    <description>Assignment volume by group, broken out by week, all statuses. Use this to spot a group going quiet (no rows for a week) or an unusually heavy week before digging into per-member fairness.</description>
+    <format>Summary</format>
+    <groupingsDown>
+        <field>WSM_Assignment_Log__c.WSM_Group__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <groupingsDown>
+        <dateGranularity>Week</dateGranularity>
+        <field>CUST_CREATED_DATE</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>WSM Assignments by Group by Week</name>
+    <reportType>CustomEntity$WSM_Assignment_Log__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+</Report>

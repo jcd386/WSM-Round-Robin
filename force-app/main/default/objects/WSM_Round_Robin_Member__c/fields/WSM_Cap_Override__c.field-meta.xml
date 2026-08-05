@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Cap_Override__c</fullName>
+    <description>Per-member override of the group's Default Member Cap for the current period. Blank inherits the group default; 0 blocks this member from new assignments.</description>
+    <inlineHelpText>Overrides the group's per-period cap for this member. 0 blocks assignments; blank inherits the group default.</inlineHelpText>
+    <label>Cap Override</label>
+    <precision>5</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+</CustomField>

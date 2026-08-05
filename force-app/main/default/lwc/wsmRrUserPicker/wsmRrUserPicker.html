@@ -1,0 +1,35 @@
+<template>
+    <div class="wup">
+        <c-wsm-rr-combobox
+            label={label}
+            placeholder={placeholder}
+            options={options}
+            value={singleValue}
+            required={required}
+            onfocusopen={handleFocusOpen}
+            onsearch={handleSearch}
+            onchange={handleChange}
+        ></c-wsm-rr-combobox>
+        <template lwc:if={multi}>
+            <template lwc:if={hasChips}>
+                <ul class="wup__chips slds-p-top_x-small">
+                    <template for:each={chips} for:item="chip">
+                        <li key={chip.userId} class="slds-listbox-item">
+                            <span class="slds-pill">
+                                <span class="slds-pill__label slds-truncate" title={chip.name}>{chip.name}</span>
+                                <button
+                                    class="slds-button slds-button_icon slds-pill__remove"
+                                    title="Remove"
+                                    data-id={chip.userId}
+                                    onclick={handleRemoveChip}
+                                >
+                                    <lightning-icon icon-name="utility:close" size="xx-small" variant="bare"></lightning-icon>
+                                </button>
+                            </span>
+                        </li>
+                    </template>
+                </ul>
+            </template>
+        </template>
+    </div>
+</template>

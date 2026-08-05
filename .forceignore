@@ -1,0 +1,6 @@
+package.xml
+**/jsconfig.json
+**/.eslintrc.json
+node_modules
+.sf
+.sfdx

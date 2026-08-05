@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Rotation_Value__c</fullName>
+    <description>Internal stride position used by the Weighted algorithm. Lower values are picked next; advances by 1000/weight after each assignment. System-managed.</description>
+    <inlineHelpText>System-managed stride position for the Weighted algorithm. Do not edit manually.</inlineHelpText>
+    <label>Rotation Value</label>
+    <precision>12</precision>
+    <required>false</required>
+    <scale>6</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+</CustomField>

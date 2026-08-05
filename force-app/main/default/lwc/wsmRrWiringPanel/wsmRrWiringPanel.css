@@ -1,0 +1,149 @@
+:host {
+    display: block;
+}
+
+.wp {
+    padding: 12px;
+}
+
+.wp__callout {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    font-size: 0.8125rem;
+}
+
+.wp__calloutIcon {
+    flex: 0 0 auto;
+}
+
+.wp__steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: step;
+}
+
+.wp__step {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.wp__stepnum {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--slds-g-color-brand-base-50, #0176d3);
+    color: #fff;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wp__stepbody {
+    flex: 1 1 auto;
+    font-size: 0.8125rem;
+}
+
+.wp__stepbody p {
+    margin: 0 0 4px;
+}
+
+.wp__caption {
+    font-size: 0.6875rem;
+    color: #706e6b;
+}
+
+.wp__copyrow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0;
+}
+
+.wp__code {
+    background: var(--slds-g-color-neutral-base-95, #f3f3f3);
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 0.75rem;
+}
+
+.wp__code_block {
+    display: block;
+    white-space: pre-wrap;
+    word-break: break-all;
+    padding: 8px 10px;
+    flex: 1 1 auto;
+}
+
+.wp__decision {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.75rem;
+    margin-top: 4px;
+}
+
+.wp__decision th {
+    text-align: left;
+    color: #706e6b;
+    font-weight: 600;
+    padding: 4px 6px;
+    border-bottom: 1px solid var(--slds-g-color-border-base-1, #dddbda);
+}
+
+.wp__decision td {
+    padding: 4px 6px;
+    border-bottom: 1px solid var(--slds-g-color-border-base-1, #f3f2f2);
+}
+
+.wp__pill {
+    display: inline-block;
+    font-size: 0.625rem;
+    font-weight: 700;
+    border-radius: 3px;
+    padding: 1px 6px;
+}
+
+.wp__pill_ok {
+    background: #e6f5ea;
+    color: #2e844a;
+}
+
+.wp__pill_warn {
+    background: #fef2cd;
+    color: #8c4b02;
+}
+
+.wp__pill_err {
+    background: #fde3e1;
+    color: #ba0517;
+}
+
+.wp__devsection {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--slds-g-color-border-base-1, #e5e5e5);
+}
+
+.wp__devtoggle {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 0.75rem;
+    color: var(--slds-g-color-brand-base-40, #014486);
+    cursor: pointer;
+}
+
+.wp__devcode {
+    margin-top: 8px;
+}

@@ -1,0 +1,18 @@
+{
+  "packageDirectories": [
+    {
+      "path": "force-app",
+      "default": true,
+      "package": "WSM Round Robin",
+      "versionNumber": "2.0.0.NEXT"
+    }
+  ],
+  "name": "WSM Round Robin",
+  "namespace": "",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "64.0",
+  "unpackagedMetadata": {
+    "path": "unpackaged"
+  },
+  "packageAliases": {}
+}

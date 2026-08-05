@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Active__c</fullName>
+    <defaultValue>true</defaultValue>
+    <description>Pause toggle for this seat. Inactive members are skipped by the eligibility pipeline without being removed from the group.</description>
+    <inlineHelpText>Uncheck to pause this member without removing their seat.</inlineHelpText>
+    <label>Active</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

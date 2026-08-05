@@ -1,0 +1,87 @@
+<template>
+    <div class="al">
+        <div class="al__grid">
+            <div class="al__col">
+                <div class="al__colhead">
+                    <span>Assignments this period</span>
+                    <span class="slds-text-color_weak al__periodlabel">{periodLabel}</span>
+                </div>
+                <template lwc:if={hasBars}>
+                    <ul class="al__bars">
+                        <template for:each={bars} for:item="bar">
+                            <li key={bar.memberId} class="al__baritem">
+                                <span class="al__barname slds-truncate" title={bar.userName}>{bar.userName}</span>
+                                <div class="al__bartrack">
+                                    <div class={bar.fillClass} style={bar.fillStyle}></div>
+                                </div>
+                                <span class="al__barcount">{bar.periodCount}</span>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+                <template lwc:if={hasNoBars}>
+                    <p class="slds-text-color_weak al__empty">No members yet.</p>
+                </template>
+
+                <button class="slds-button slds-button_neutral al__resetbtn" onclick={openResetConfirm}>
+                    Reset counters
+                </button>
+            </div>
+
+            <div class="al__col">
+                <div class="al__colhead">
+                    <span>Last 25 assignments</span>
+                </div>
+                <template lwc:if={hasLogs}>
+                    <ul class="al__loglist">
+                        <template for:each={logRows} for:item="log">
+                            <li key={log.logId} class="al__logrow">
+                                <lightning-icon
+                                    icon-name={log.iconName}
+                                    variant={log.iconVariant}
+                                    size="x-small"
+                                    class="al__logicon"
+                                ></lightning-icon>
+                                <div class="al__logbody">
+                                    <div class="al__logtop">
+                                        <span class="al__logname">{log.assignedUserName}</span>
+                                        <span class="al__logtime slds-text-color_weak">{log.relativeTime}</span>
+                                    </div>
+                                    <div class="al__logmeta slds-text-color_weak">
+                                        <span>{log.statusLabel}</span>
+                                        <template lwc:if={log.context}><span> · {log.context}</span></template>
+                                        <template lwc:if={log.hasRecordLink}>
+                                            <span> · </span>
+                                            <a href={log.recordUrl}>View record</a>
+                                        </template>
+                                    </div>
+                                </div>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+                <template lwc:if={hasNoLogs}>
+                    <p class="slds-text-color_weak al__empty">No assignments logged yet — this shows up once the group is wired into a flow.</p>
+                </template>
+            </div>
+        </div>
+    </div>
+
+    <template lwc:if={showResetConfirm}>
+        <section class="slds-modal slds-fade-in-open slds-modal_small" role="dialog">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <h2 class="slds-modal__title">Reset counters?</h2>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <p>This clears each member's rotation position and last-assigned timestamp so the next assignment starts fresh. Existing assignment logs are not deleted, and Least Assigned counts continue to reflect the current period.</p>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick={closeResetConfirm}>Cancel</button>
+                    <button class="slds-button slds-button_destructive" onclick={doReset}>Reset counters</button>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

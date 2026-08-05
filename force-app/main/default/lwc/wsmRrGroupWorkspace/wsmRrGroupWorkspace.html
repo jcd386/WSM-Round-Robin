@@ -1,0 +1,172 @@
+<template>
+    <template lwc:if={isLoading}>
+        <div class="gw__loading slds-align_absolute-center">
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </div>
+    </template>
+
+    <template lwc:if={hasGroup}>
+        <div class="gw">
+            <template lwc:if={showCreatedBanner}>
+                <div class="gw__banner slds-notify slds-notify_alert slds-theme_success">
+                    Group created. Open the <strong>Wiring</strong> tab below to connect it to a Flow.
+                    <button class="slds-button slds-button_icon gw__bannerclose" title="Dismiss" onclick={dismissBanner}>
+                        <lightning-icon icon-name="utility:close" size="x-small"></lightning-icon>
+                    </button>
+                </div>
+            </template>
+
+            <div class="gw__header">
+                <div class="gw__headertop">
+                    <template lwc:if={editingName}>
+                        <input
+                            class="gw__nameinput"
+                            value={nameDraft}
+                            onblur={saveNameEdit}
+                            onkeydown={handleNameKeydown}
+                            oninput={handleNameInput}
+                        />
+                    </template>
+                    <template lwc:if={notEditingName}>
+                        <h1 class="gw__name" title="Click to rename" onclick={startNameEdit}>{grp.name}</h1>
+                    </template>
+
+                    <span class="gw__devchip" title="Developer name">
+                        <code>{grp.developerName}</code>
+                        <button class="slds-button slds-button_icon" title="Copy" onclick={handleCopyDevName}>
+                            <lightning-icon icon-name="utility:copy" size="xx-small"></lightning-icon>
+                        </button>
+                    </span>
+
+                    <span class="gw__algochip">{grp.algorithm}</span>
+
+                    <span class="gw__spacer"></span>
+
+                    <lightning-input
+                        type="toggle"
+                        label="Active"
+                        variant="label-hidden"
+                        checked={grp.active}
+                        onchange={handleActiveToggle}
+                        class="gw__activetoggle"
+                    ></lightning-input>
+                    <span class="gw__activelabel">{activeLabel}</span>
+
+                    <button class="slds-button slds-button_neutral gw__testbtn" onclick={openSimulator}>
+                        Test Assignment
+                    </button>
+
+                    <div class="slds-dropdown-trigger slds-dropdown-trigger_click gw__overflow">
+                        <button class="slds-button slds-button_icon slds-button_icon-border-filled" title="More actions" onclick={toggleOverflow}>
+                            <lightning-icon icon-name="utility:down" size="x-small"></lightning-icon>
+                        </button>
+                        <template lwc:if={showOverflow}>
+                            <div class="slds-dropdown slds-dropdown_right gw__overflowmenu">
+                                <ul class="slds-listbox slds-listbox_vertical">
+                                    <li class="slds-listbox__item">
+                                        <button class="gw__menuitem" onclick={openResetConfirm}>Reset counters</button>
+                                    </li>
+                                    <li class="slds-listbox__item">
+                                        <button class="gw__menuitem gw__menuitem_destructive" onclick={openDeleteConfirm}>Delete group</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="gw__lifecycle">
+                    <span class={membersChipClass}>Members {membersCheck}</span>
+                    <span class="gw__lcsep">·</span>
+                    <span class={activeChipClass}>Active {activeCheck}</span>
+                    <span class="gw__lcsep">·</span>
+                    <span class={wiredChipClass}>Wired {wiredCheck}</span>
+                </div>
+            </div>
+
+            <lightning-tabset variant="scoped" active-tab-value={activeTabValue} class="gw__tabs">
+                <lightning-tab label="Members" value="members">
+                    <c-wsm-rr-member-table
+                        group-id={effectiveGroupId}
+                        algorithm={grp.algorithm}
+                        capacity-mode={grp.capacityMode}
+                        members={members}
+                        onrefresh={handleChildRefresh}
+                    ></c-wsm-rr-member-table>
+                </lightning-tab>
+                <lightning-tab label="Settings" value="settings">
+                    <c-wsm-rr-group-editor grp={grp} onrefresh={handleChildRefresh}></c-wsm-rr-group-editor>
+                </lightning-tab>
+                <lightning-tab label="Activity" value="activity">
+                    <c-wsm-rr-activity-log
+                        group-id={effectiveGroupId}
+                        members={members}
+                        recent-logs={recentLogs}
+                        period-label={periodLabel}
+                        onrefresh={handleChildRefresh}
+                    ></c-wsm-rr-activity-log>
+                </lightning-tab>
+                <lightning-tab label="Wiring" value="wiring">
+                    <c-wsm-rr-wiring-panel grp={grp}></c-wsm-rr-wiring-panel>
+                </lightning-tab>
+            </lightning-tabset>
+        </div>
+    </template>
+
+    <template lwc:if={showSimulator}>
+        <c-wsm-rr-simulator
+            group-id={effectiveGroupId}
+            group-name={grp.name}
+            onrefresh={handleChildRefresh}
+            onclose={closeSimulator}
+        ></c-wsm-rr-simulator>
+    </template>
+
+    <template lwc:if={showDeactivateConfirm}>
+        <section class="slds-modal slds-fade-in-open slds-modal_small" role="dialog">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header"><h2 class="slds-modal__title">Deactivate group?</h2></div>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <p>This group has assignments in the last 7 days. Deactivating stops new assignments immediately — any Flow calling it will get GROUP_INACTIVE until you turn it back on.</p>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick={cancelDeactivate}>Cancel</button>
+                    <button class="slds-button slds-button_destructive" onclick={confirmDeactivate}>Deactivate</button>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <template lwc:if={showResetConfirm}>
+        <section class="slds-modal slds-fade-in-open slds-modal_small" role="dialog">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header"><h2 class="slds-modal__title">Reset counters?</h2></div>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <p>This clears each member's rotation position and last-assigned timestamp. Assignment logs are not deleted.</p>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick={cancelReset}>Cancel</button>
+                    <button class="slds-button slds-button_destructive" onclick={confirmReset}>Reset counters</button>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <template lwc:if={showDeleteConfirm}>
+        <section class="slds-modal slds-fade-in-open slds-modal_small" role="dialog">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header"><h2 class="slds-modal__title">Delete "{grp.name}"?</h2></div>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <p>This permanently deletes the group and its members. Assignment logs are kept for audit history. This can't be undone.</p>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick={cancelDelete}>Cancel</button>
+                    <button class="slds-button slds-button_destructive" onclick={confirmDelete}>Delete group</button>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

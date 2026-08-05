@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <brand>
+        <headerColor>#1B5297</headerColor>
+        <shouldOverrideOrgTheme>false</shouldOverrideOrgTheme>
+    </brand>
+    <description>Round-robin lead and case assignment. Manage rotation groups, members, capacity, and availability from one guided app — no raw object access required.</description>
+    <formFactors>Large</formFactors>
+    <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
+    <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
+    <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
+    <isOmniPinnedViewEnabled>false</isOmniPinnedViewEnabled>
+    <label>WSM Round Robin</label>
+    <navType>Standard</navType>
+    <tabs>WSM_Round_Robin_Manager</tabs>
+    <tabs>WSM_Round_Robin_Group__c</tabs>
+    <tabs>WSM_Assignment_Log__c</tabs>
+    <uiType>Lightning</uiType>
+    <utilityBar>WSM_Round_Robin_UtilityBar</utilityBar>
+</CustomApplication>

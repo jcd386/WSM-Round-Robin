@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Is_Manager__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Marks this member as a pool manager for the group. Reserved for the v2.1 Group Manager permission set; has no effect on assignment logic in v2.0.</description>
+    <inlineHelpText>Reserved for v2.1 pool-manager permissions. No effect on routing today.</inlineHelpText>
+    <label>Is Manager</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

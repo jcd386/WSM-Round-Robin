@@ -1,0 +1,159 @@
+:host {
+    display: block;
+}
+
+.wiz__card {
+    max-width: 640px;
+    margin: 24px auto;
+    background: #fff;
+    border: 1px solid var(--slds-g-color-border-base-1, #dddbda);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.wiz__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.wiz__cardtitle {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.wiz__steplabel {
+    font-size: 0.75rem;
+    color: #706e6b;
+    margin: 2px 0 0;
+}
+
+.wiz__steplabel_modal {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 2px 0 0;
+}
+
+.wiz__close {
+    color: #fff;
+}
+
+.wiz__body {
+    min-height: 220px;
+}
+
+.wiz__grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.wiz__btngroup {
+    display: flex;
+}
+
+.wiz__btn {
+    flex: 1 1 auto;
+}
+
+.wiz__caption {
+    margin-top: 4px;
+    font-size: 0.6875rem;
+}
+
+.wiz__pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    align-items: end;
+}
+
+.wiz__step2 {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.wiz__memberlist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.wiz__memberrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    background: var(--slds-g-color-neutral-base-98, #fafaf9);
+}
+
+.wiz__membername {
+    flex: 1 1 auto;
+    font-size: 0.8125rem;
+}
+
+.wiz__weightinput {
+    width: 44px;
+    padding: 3px 4px;
+    font-size: 0.75rem;
+    border: 1px solid var(--slds-g-color-border-base-1, #c9c7c5);
+    border-radius: 4px;
+}
+
+.wiz__empty {
+    font-size: 0.8125rem;
+    padding: 16px 0;
+    text-align: center;
+}
+
+.wiz__summary {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    row-gap: 8px;
+    font-size: 0.8125rem;
+    margin: 0 0 16px;
+}
+
+.wiz__summary dt {
+    color: #706e6b;
+    font-weight: 600;
+}
+
+.wiz__summary dd {
+    margin: 0;
+}
+
+.wiz__footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--slds-g-color-border-base-1, #e5e5e5);
+}
+
+.wiz__footer_empty {
+    justify-content: space-between;
+}
+
+.wiz__footerbtns {
+    display: flex;
+    gap: 8px;
+}
+
+.wiz__spacer {
+    flex: 1 1 auto;
+}
+
+.wiz__cancel {
+    margin-right: auto;
+}

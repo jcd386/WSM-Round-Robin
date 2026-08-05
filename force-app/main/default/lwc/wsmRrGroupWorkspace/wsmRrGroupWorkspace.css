@@ -1,0 +1,147 @@
+:host {
+    display: block;
+}
+
+.gw__loading {
+    height: 300px;
+    position: relative;
+}
+
+.gw {
+    padding: 0;
+}
+
+.gw__banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    font-size: 0.8125rem;
+}
+
+.gw__bannerclose {
+    margin-left: auto;
+}
+
+.gw__header {
+    padding: 12px;
+    border-bottom: 1px solid var(--slds-g-color-border-base-1, #e5e5e5);
+}
+
+.gw__headertop {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.gw__name {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin: 0;
+    cursor: text;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+.gw__name:hover {
+    background: var(--slds-g-color-neutral-base-98, #fafaf9);
+}
+
+.gw__nameinput {
+    font-size: 1.125rem;
+    font-weight: 700;
+    border: 1px solid var(--slds-g-color-brand-base-50, #0176d3);
+    border-radius: 4px;
+    padding: 2px 6px;
+    min-width: 200px;
+}
+
+.gw__devchip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--slds-g-color-neutral-base-95, #f3f3f3);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 0.6875rem;
+}
+
+.gw__algochip {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--slds-g-color-brand-base-40, #014486);
+    background: var(--slds-g-color-brand-base-95, #eef4ff);
+    border-radius: 3px;
+    padding: 2px 8px;
+}
+
+.gw__spacer {
+    flex: 1 1 auto;
+}
+
+.gw__activetoggle {
+    margin-right: -4px;
+}
+
+.gw__activelabel {
+    font-size: 0.75rem;
+    color: #444;
+    margin-right: 8px;
+}
+
+.gw__testbtn {
+    white-space: nowrap;
+}
+
+.gw__overflow {
+    position: relative;
+}
+
+.gw__overflowmenu {
+    min-width: 160px;
+}
+
+.gw__menuitem {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 8px 12px;
+    font-size: 0.8125rem;
+    cursor: pointer;
+}
+
+.gw__menuitem:hover {
+    background: var(--slds-g-color-neutral-base-98, #fafaf9);
+}
+
+.gw__menuitem_destructive {
+    color: #ba0517;
+}
+
+.gw__lifecycle {
+    margin-top: 8px;
+    font-size: 0.75rem;
+}
+
+.gw__lcchip {
+    color: #706e6b;
+}
+
+.gw__lcchip_done {
+    color: #2e844a;
+    font-weight: 600;
+}
+
+.gw__lcsep {
+    margin: 0 6px;
+    color: #c9c7c5;
+}
+
+.gw__tabs {
+    margin-top: 4px;
+}

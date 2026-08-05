@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Last_Assigned__c</fullName>
+    <description>Timestamp of this member's most recent assignment. Drives Strict Rotation ordering (oldest first) and is seeded from v1 data during migration.</description>
+    <inlineHelpText>Used by Strict Rotation to determine whose turn is next. Do not edit manually.</inlineHelpText>
+    <label>Last Assigned</label>
+    <required>false</required>
+    <type>DateTime</type>
+</CustomField>

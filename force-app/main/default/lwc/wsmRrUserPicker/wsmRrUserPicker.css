@@ -1,0 +1,12 @@
+:host {
+    display: block;
+}
+
+.wup__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}

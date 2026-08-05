@@ -1,0 +1,25 @@
+:host {
+    display: block;
+    width: 320px;
+}
+
+.help {
+    padding: 4px 8px;
+}
+
+.help__text {
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.help__steps {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+
+.help__steps li {
+    margin-bottom: 4px;
+}

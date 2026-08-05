@@ -1,0 +1,133 @@
+:host {
+    display: block;
+}
+
+.al {
+    padding: 12px;
+}
+
+.al__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media (max-width: 900px) {
+    .al__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.al__colhead {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #444;
+    margin-bottom: 8px;
+}
+
+.al__periodlabel {
+    font-weight: 400;
+    font-size: 0.6875rem;
+}
+
+.al__bars {
+    list-style: none;
+    margin: 0 0 12px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.al__baritem {
+    display: grid;
+    grid-template-columns: 96px 1fr 28px;
+    align-items: center;
+    gap: 8px;
+}
+
+.al__barname {
+    font-size: 0.75rem;
+}
+
+.al__bartrack {
+    height: 8px;
+    background: var(--slds-g-color-neutral-base-95, #f3f3f3);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.al__barfill {
+    height: 100%;
+    background: var(--slds-g-color-brand-base-50, #0176d3);
+    border-radius: 4px;
+}
+
+.al__barfill_inactive {
+    background: #c9c7c5;
+}
+
+.al__barcount {
+    font-size: 0.75rem;
+    text-align: right;
+    color: #444;
+}
+
+.al__resetbtn {
+    margin-top: 4px;
+}
+
+.al__loglist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 360px;
+    overflow-y: auto;
+}
+
+.al__logrow {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.al__logicon {
+    margin-top: 2px;
+    flex: 0 0 auto;
+}
+
+.al__logbody {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.al__logtop {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.al__logname {
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.al__logtime {
+    font-size: 0.6875rem;
+    flex: 0 0 auto;
+}
+
+.al__logmeta {
+    font-size: 0.6875rem;
+}
+
+.al__empty {
+    font-size: 0.8125rem;
+    padding: 12px 0;
+}

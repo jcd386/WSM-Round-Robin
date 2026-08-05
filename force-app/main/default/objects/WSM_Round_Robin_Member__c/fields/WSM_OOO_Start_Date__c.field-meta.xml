@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_OOO_Start_Date__c</fullName>
+    <description>First date this member is unavailable for assignment. Blank means no out-of-office window is active.</description>
+    <inlineHelpText>First day this member is out of office and skipped by the engine.</inlineHelpText>
+    <label>Out of Office Start</label>
+    <required>false</required>
+    <type>Date</type>
+</CustomField>

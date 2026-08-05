@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Sort_Order__c</fullName>
+    <description>Admin-defined display and tie-break order for this member within the group.</description>
+    <inlineHelpText>Controls display order and breaks ties when other ordering criteria are equal.</inlineHelpText>
+    <label>Sort Order</label>
+    <precision>4</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+</CustomField>

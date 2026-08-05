@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Algorithm__c</fullName>
+    <description>Selection algorithm used to pick the next member: Strict Rotation cycles by last-assigned time, Weighted uses a member weight stride, Least Assigned picks whoever has the fewest assignments this period.</description>
+    <inlineHelpText>How the next assignee is chosen among eligible members.</inlineHelpText>
+    <label>Algorithm</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Strict Rotation</fullName>
+                <default>true</default>
+                <label>Strict Rotation</label>
+            </value>
+            <value>
+                <fullName>Weighted</fullName>
+                <default>false</default>
+                <label>Weighted</label>
+            </value>
+            <value>
+                <fullName>Least Assigned</fullName>
+                <default>false</default>
+                <label>Least Assigned</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>64.0</apiVersion>
+    <isExposed>false</isExposed>
+    <masterLabel>WSM Round Robin Setup Wizard</masterLabel>
+    <description>3-step New Group wizard — modal or full-width empty-state variant.</description>
+</LightningComponentBundle>

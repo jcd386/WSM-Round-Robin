@@ -1,0 +1,145 @@
+<template>
+    <div class="mt">
+        <div class="mt__addrow">
+            <div class="mt__addpicker">
+                <c-wsm-rr-user-picker
+                    multi
+                    group-id={groupId}
+                    placeholder="Search users to add…"
+                    onchipschange={handleChipsChange}
+                ></c-wsm-rr-user-picker>
+            </div>
+            <button class="slds-button slds-button_brand mt__addbtn" disabled={isAddDisabled} onclick={handleAdd}>
+                Add {addCountLabel}
+            </button>
+        </div>
+
+        <template lwc:if={hasRows}>
+            <table class="mt__table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th class="mt__col-narrow">Active</th>
+                        <template lwc:if={showWeight}><th class="mt__col-narrow">Weight</th></template>
+                        <template lwc:if={showCapacity}><th class="mt__col-cap">Cap / Current</th></template>
+                        <th class="mt__col-ooo">OOO</th>
+                        <th class="mt__col-narrow">Assigned</th>
+                        <template lwc:if={showOrder}><th class="mt__col-order">Order</th></template>
+                        <th class="mt__col-narrow"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={rows} for:item="row">
+                        <tr key={row.memberId} class={row.rowClass}>
+                            <td>
+                                <span class="slds-truncate" title={row.userName}>{row.userName}</span>
+                                <template lwc:if={row.isManager}>
+                                    <span class="mt__mgrbadge" title="Group manager">MGR</span>
+                                </template>
+                            </td>
+                            <td>
+                                <lightning-input
+                                    variant="label-hidden"
+                                    type="toggle"
+                                    label="Active"
+                                    checked={row.active}
+                                    data-id={row.memberId}
+                                    onchange={handleActiveToggle}
+                                ></lightning-input>
+                            </td>
+                            <template lwc:if={showWeight}>
+                                <td>
+                                    <input
+                                        type="number"
+                                        class="mt__mininput"
+                                        min="1"
+                                        max="100"
+                                        value={row.weight}
+                                        data-id={row.memberId}
+                                        onchange={handleWeightChange}
+                                    />
+                                </td>
+                            </template>
+                            <template lwc:if={showCapacity}>
+                                <td>
+                                    <span class="mt__capcur">{row.periodCount}/{row.effectiveCapLabel}</span>
+                                    <input
+                                        type="number"
+                                        class="mt__mininput mt__capinput"
+                                        min="0"
+                                        placeholder="auto"
+                                        value={row.capOverride}
+                                        data-id={row.memberId}
+                                        onchange={handleCapChange}
+                                    />
+                                </td>
+                            </template>
+                            <td class="mt__ooo-cell">
+                                <button class="slds-button mt__oobtn" data-id={row.memberId} onclick={toggleOooPopover}>
+                                    {row.oooLabel}
+                                </button>
+                                <template lwc:if={row.oooOpen}>
+                                    <div class="mt__oopop">
+                                        <lightning-input
+                                            type="date"
+                                            label="OOO start"
+                                            value={oooDraftStart}
+                                            onchange={handleOooStartChange}
+                                        ></lightning-input>
+                                        <lightning-input
+                                            type="date"
+                                            label="Returns"
+                                            value={oooDraftReturn}
+                                            onchange={handleOooReturnChange}
+                                        ></lightning-input>
+                                        <div class="mt__oopop-actions">
+                                            <button class="slds-button slds-button_neutral" data-id={row.memberId} onclick={clearOoo}>Clear</button>
+                                            <button class="slds-button slds-button_brand" data-id={row.memberId} onclick={saveOoo}>Save</button>
+                                        </div>
+                                    </div>
+                                </template>
+                            </td>
+                            <td>{row.periodCount}</td>
+                            <template lwc:if={showOrder}>
+                                <td class="mt__order-cell">
+                                    <button class="slds-button slds-button_icon" title="Move up" disabled={row.isFirst} data-id={row.memberId} onclick={moveUp}>
+                                        <lightning-icon icon-name="utility:up" size="xx-small"></lightning-icon>
+                                    </button>
+                                    <button class="slds-button slds-button_icon" title="Move down" disabled={row.isLast} data-id={row.memberId} onclick={moveDown}>
+                                        <lightning-icon icon-name="utility:down" size="xx-small"></lightning-icon>
+                                    </button>
+                                </td>
+                            </template>
+                            <td>
+                                <button class="slds-button slds-button_icon" title="Remove" data-id={row.memberId} onclick={confirmRemove}>
+                                    <lightning-icon icon-name="utility:close" size="x-small"></lightning-icon>
+                                </button>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </template>
+        <template lwc:if={isEmpty}>
+            <div class="mt__empty slds-text-color_weak">No members yet — add someone above to get started.</div>
+        </template>
+    </div>
+
+    <template lwc:if={showRemoveConfirm}>
+        <section class="slds-modal slds-fade-in-open slds-modal_small" role="dialog">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <h2 class="slds-modal__title">Remove member?</h2>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <p>Remove {removeTargetName} from this group? They will no longer receive new assignments.</p>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick={cancelRemove}>Cancel</button>
+                    <button class="slds-button slds-button_destructive" onclick={doRemove}>Remove</button>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

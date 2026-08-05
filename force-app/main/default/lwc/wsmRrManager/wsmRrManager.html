@@ -1,0 +1,63 @@
+<template>
+    <div class="mgr">
+        <div class="mgr__topbar">
+            <h1 class="mgr__title">Round Robin Manager</h1>
+            <div class="mgr__search">
+                <lightning-input
+                    type="search"
+                    variant="label-hidden"
+                    label="Search groups"
+                    placeholder="Search groups…"
+                    value={filterTerm}
+                    onchange={handleSearchChange}
+                ></lightning-input>
+            </div>
+            <span class="mgr__spacer"></span>
+            <button class="slds-button slds-button_brand" onclick={handleNewGroupClick}>New Group</button>
+        </div>
+
+        <template lwc:if={isLoading}>
+            <div class="mgr__loading slds-align_absolute-center">
+                <lightning-spinner alternative-text="Loading groups" size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <template lwc:if={showEmptyState}>
+            <c-wsm-rr-setup-wizard variant="empty" oncreated={handleWizardCreated}></c-wsm-rr-setup-wizard>
+        </template>
+
+        <template lwc:if={showWorkspace}>
+            <div class="mgr__grid">
+                <div class="mgr__rail">
+                    <c-wsm-rr-group-list
+                        groups={groups}
+                        selected-group-id={selectedGroupId}
+                        filter-term={filterTerm}
+                        ongroupselect={handleGroupSelect}
+                    ></c-wsm-rr-group-list>
+                </div>
+                <div class="mgr__workspace">
+                    <template lwc:if={selectedGroupId}>
+                        <c-wsm-rr-group-workspace
+                            group-id={selectedGroupId}
+                            initial-tab={pendingInitialTab}
+                            ongroupchanged={handleGroupChanged}
+                            ongroupdeleted={handleGroupDeleted}
+                        ></c-wsm-rr-group-workspace>
+                    </template>
+                    <template lwc:if={noSelection}>
+                        <div class="mgr__noselection slds-text-color_weak">Select a group on the left, or create a new one.</div>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <template lwc:if={showWizardModal}>
+        <c-wsm-rr-setup-wizard
+            variant="modal"
+            oncreated={handleWizardCreated}
+            oncancel={handleWizardCancel}
+        ></c-wsm-rr-setup-wizard>
+    </template>
+</template>

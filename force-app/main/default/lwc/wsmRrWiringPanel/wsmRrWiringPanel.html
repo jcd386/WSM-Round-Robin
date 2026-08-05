@@ -1,0 +1,70 @@
+<template>
+    <div class="wp">
+        <div class="wp__callout slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_info">
+            <span class="slds-assistive-text">info</span>
+            <lightning-icon icon-name="utility:info" size="x-small" variant="inverse" class="wp__calloutIcon"></lightning-icon>
+            Assign the <strong>WSM_Round_Robin_User</strong> permission set to any user or automation user whose flows will call this group.
+        </div>
+
+        <ol class="wp__steps">
+            <li class="wp__step">
+                <div class="wp__stepnum">1</div>
+                <div class="wp__stepbody">
+                    <p>Clone the starter flow <strong>WSM_ALF_Round_Robin_Example_Assignment</strong>, or add a <strong>Round Robin: Get Assignee</strong> action to your own flow.</p>
+                </div>
+            </li>
+            <li class="wp__step">
+                <div class="wp__stepnum">2</div>
+                <div class="wp__stepbody">
+                    <p>Set the action's <strong>Group Developer Name</strong> input:</p>
+                    <div class="wp__copyrow">
+                        <code class="wp__code">{devName}</code>
+                        <button class="slds-button slds-button_icon" title="Copy" onclick={handleCopyDevName}>
+                            <lightning-icon icon-name="utility:copy" size="x-small"></lightning-icon>
+                        </button>
+                    </div>
+                    <p class="wp__caption">Optionally pass an Assigned Record Id and a short Context label — both show up in this group's Activity log.</p>
+                </div>
+            </li>
+            <li class="wp__step">
+                <div class="wp__stepnum">3</div>
+                <div class="wp__stepbody">
+                    <p>Add a <strong>Decision</strong> element on the action's <strong>Status</strong> output:</p>
+                    <table class="wp__decision">
+                        <thead>
+                            <tr><th>Status</th><th>Meaning</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="wp__pill wp__pill_ok">ASSIGNED</span></td><td>Use the returned Assigned User Id.</td></tr>
+                            <tr><td><span class="wp__pill wp__pill_warn">FALLBACK</span></td><td>No member was eligible — the group's fallback user was used instead.</td></tr>
+                            <tr><td><span class="wp__pill wp__pill_err">NO_ELIGIBLE_MEMBERS</span></td><td>No member eligible and no fallback configured — route to a human queue.</td></tr>
+                            <tr><td><span class="wp__pill wp__pill_err">GROUP_INACTIVE / GROUP_NOT_FOUND</span></td><td>Config problem — check the group in this app.</td></tr>
+                            <tr><td><span class="wp__pill wp__pill_err">LOCK_TIMEOUT / ERROR</span></td><td>Transient — safe to retry once.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </li>
+            <li class="wp__step">
+                <div class="wp__stepnum">4</div>
+                <div class="wp__stepbody">
+                    <p>Activate your flow and run a <strong>Test Assignment</strong> from this group's header to confirm the wiring before going live.</p>
+                </div>
+            </li>
+        </ol>
+
+        <div class="wp__devsection">
+            <button class="wp__devtoggle" onclick={toggleDevBlock}>
+                <lightning-icon icon-name={devIconName} size="xx-small"></lightning-icon>
+                For developers: call the engine directly from Apex
+            </button>
+            <template lwc:if={showDevBlock}>
+                <div class="wp__copyrow wp__devcode">
+                    <code class="wp__code wp__code_block">{apexSnippet}</code>
+                    <button class="slds-button slds-button_icon" title="Copy" onclick={handleCopyApex}>
+                        <lightning-icon icon-name="utility:copy" size="x-small"></lightning-icon>
+                    </button>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>
