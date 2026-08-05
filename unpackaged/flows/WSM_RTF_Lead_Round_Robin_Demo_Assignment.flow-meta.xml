@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Get_Round_Robin_Assignee</name>
+        <label>Get Round Robin Assignee</label>
+        <locationX>176</locationX>
+        <locationY>190</locationY>
+        <actionName>WSM_RoundRobinInvocable</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Assignment_Status</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>groupDeveloperName</name>
+            <value>
+                <stringValue>strict_rotation_demo</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>assignedRecordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>context</name>
+            <value>
+                <stringValue>Lead auto-assignment (demo flow)</stringValue>
+            </value>
+        </inputParameters>
+        <nameSegment>WSM_RoundRobinInvocable</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <apiVersion>64.0</apiVersion>
+    <decisions>
+        <name>Assignment_Status</name>
+        <label>Assignment successful?</label>
+        <locationX>176</locationX>
+        <locationY>300</locationY>
+        <defaultConnectorLabel>Not Assigned</defaultConnectorLabel>
+        <rules>
+            <name>Assigned</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Round_Robin_Assignee.status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>ASSIGNED</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Lead_Owner</targetReference>
+            </connector>
+            <label>Assigned</label>
+        </rules>
+    </decisions>
+    <description>DEMO ONLY (WSM-Dev-AF test environment) — round-robins every new Lead across the Strict Rotation Demo group and stamps the Lead Id on the assignment log. Delete this flow when the test environment is torn down.</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>ISNEW</name>
+        <dataType>Boolean</dataType>
+        <expression>ISNEW()</expression>
+    </formulas>
+    <interviewLabel>WSM - RTF - Lead: Round Robin Demo Assignment {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>WSM - RTF - Lead: Round Robin Demo Assignment</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Update_Lead_Owner</name>
+        <label>Update Lead Owner</label>
+        <locationX>50</locationX>
+        <locationY>410</locationY>
+        <inputAssignments>
+            <field>OwnerId</field>
+            <value>
+                <elementReference>Get_Round_Robin_Assignee.userId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Round_Robin_Assignee</targetReference>
+        </connector>
+        <object>Lead</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>
