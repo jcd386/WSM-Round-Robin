@@ -75,6 +75,11 @@ private class WSM_RoundRobinEngine_Test {
         Integer dmlUsed = Limits.getDmlStatements() - dmlBefore;
         System.assert(queriesUsed <= 4, 'Expected a fixed, small query footprint regardless of batch size. Used ' + queriesUsed);
         System.assertEquals(2, dmlUsed, 'Expected exactly one member update and one log insert per call, regardless of batch size.');
+
+        for (WSM_Round_Robin_Member__c m : [SELECT WSM_Total_Assignments__c FROM WSM_Round_Robin_Member__c WHERE WSM_Group__c = :grp.Id]) {
+            System.assertEquals(40, m.WSM_Total_Assignments__c,
+                'Total Assignments must accumulate one increment per pick, not one per transaction.');
+        }
     }
 
     @isTest

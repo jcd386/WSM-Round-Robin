@@ -13,6 +13,7 @@ public class WSM_MemberState {
     public Datetime lastAssigned;
     public Integer periodCount;
     public Boolean dirty;
+    public Integer picksThisCall;
 
     public WSM_MemberState(WSM_Round_Robin_Member__c record) {
         this.record = record;
@@ -20,12 +21,14 @@ public class WSM_MemberState {
         this.lastAssigned = record.WSM_Last_Assigned__c;
         this.periodCount = 0;
         this.dirty = false;
+        this.picksThisCall = 0;
     }
 
     /** Copies working state back onto the SObject so it's ready for the bulk update DML. */
     public void flushToRecord() {
         record.WSM_Rotation_Value__c = rotationValue;
         record.WSM_Last_Assigned__c = lastAssigned;
-        record.WSM_Total_Assignments__c = (record.WSM_Total_Assignments__c == null ? 0 : record.WSM_Total_Assignments__c) + 1;
+        record.WSM_Total_Assignments__c =
+            (record.WSM_Total_Assignments__c == null ? 0 : record.WSM_Total_Assignments__c) + picksThisCall;
     }
 }

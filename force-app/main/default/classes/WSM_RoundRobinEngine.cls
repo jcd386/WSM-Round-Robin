@@ -327,6 +327,7 @@ public without sharing class WSM_RoundRobinEngine {
         winner.lastAssigned = Datetime.newInstance(txnBase.getTime() + (groupState.msSequence * 1000));
         groupState.msSequence++;
         winner.periodCount = (winner.periodCount == null ? 0 : winner.periodCount) + 1;
+        winner.picksThisCall++;
         winner.dirty = true;
 
         WSM_RRResult result = new WSM_RRResult(true, WSM_RRResult.STATUS_ASSIGNED, gid);
