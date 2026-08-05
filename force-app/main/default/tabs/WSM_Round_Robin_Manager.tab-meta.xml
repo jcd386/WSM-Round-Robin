@@ -3,5 +3,5 @@
     <description>Primary Round Robin admin surface — manage groups, members, capacity, and simulate assignments without touching raw records.</description>
     <flexiPage>WSM_Round_Robin_Manager</flexiPage>
     <label>Round Robin Manager</label>
-    <motif>Custom70: Compass</motif>
+    <motif>Custom15: People</motif>
 </CustomTab>
