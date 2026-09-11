@@ -39,7 +39,14 @@ export default class WsmRrMemberTable extends LightningElement {
     }
 
     get sortedMembers() {
-        return [...(this.members || [])].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+        return [...(this.members || [])].sort((a, b) => {
+            const tierA = a.tier == null ? 1 : a.tier;
+            const tierB = b.tier == null ? 1 : b.tier;
+            if (tierA !== tierB) {
+                return tierA - tierB;
+            }
+            return (a.sortOrder || 0) - (b.sortOrder || 0);
+        });
     }
 
     get capHeader() {
@@ -57,12 +64,20 @@ export default class WsmRrMemberTable extends LightningElement {
 
     get rows() {
         const sorted = this.sortedMembers;
+        let prevTier = null;
         return sorted.map((m, idx) => {
             const hasCap = m.effectiveCap !== null && m.effectiveCap !== undefined;
             const capped = this.capacityMode === 'Period Cap' && hasCap;
+            const tier = m.tier == null ? 1 : m.tier;
+            const showTierDivider = tier !== prevTier;
+            prevTier = tier;
             return {
                 ...m,
-                rowClass: 'mt__row' + (m.active ? '' : ' mt__row_inactive'),
+                tier,
+                showTierDivider,
+                tierDividerKey: `tier-${tier}`,
+                tierDividerLabel: tier <= 1 ? 'Tier 1: primary pool' : `Tier ${tier}: bench`,
+                rowClass: 'mt__row' + (m.active ? '' : ' mt__row_inactive') + (tier > 1 ? ' mt__row_bench' : ''),
                 capPlaceholder: m.capOverride === null || m.capOverride === undefined ? (hasCap ? String(m.effectiveCap) : 'none') : '',
                 usedLabel: capped ? `${m.periodCount} of ${m.effectiveCap}` : String(m.periodCount || 0),
                 oooLabel: this.formatOoo(m),
@@ -161,6 +176,12 @@ export default class WsmRrMemberTable extends LightningElement {
     handleCapChange(event) {
         const val = event.target.value === '' ? null : Number(event.target.value);
         this.persist(event.currentTarget.dataset.id, { capOverride: val });
+    }
+
+    handleTierChange(event) {
+        const raw = event.target.value;
+        const val = raw === '' ? 1 : Number(raw);
+        this.persist(event.currentTarget.dataset.id, { tier: val });
     }
 
     toggleOooPopover(event) {

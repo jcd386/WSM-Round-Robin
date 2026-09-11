@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Owner_Field__c</fullName>
+    <caseSensitive>false</caseSensitive>
+    <description>API name of the field on the counted object that holds the member&apos;s User Id. Defaults to OwnerId when blank. Set this to count by a custom lookup instead of record ownership, e.g. Enrollment_Counselor__c. Must be a lookup to User or an Id/Text field holding User Ids.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Field holding the member&apos;s User Id. Leave blank for OwnerId.</inlineHelpText>
+    <label>Owner Field</label>
+    <length>80</length>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Description__c</fullName>
+    <description>Optional note explaining why this count exists, so the next admin does not have to reverse-engineer the intent from the filters.</description>
+    <inlineHelpText>Why this count exists. Future you will thank present you.</inlineHelpText>
+    <label>Description</label>
+    <length>1000</length>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>3</visibleLines>
+</CustomField>

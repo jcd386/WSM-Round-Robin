@@ -658,4 +658,295 @@ private class WSM_RR_AdminController_Test {
         System.assertEquals(false, sim.verdicts[0].eligible, 'The inactive member should be ineligible');
         System.assertEquals('Inactive', sim.verdicts[0].skipReason, 'Skip reason should explain why the member was excluded');
     }
+
+    // ------------------------------------------------------------------
+    // Capacity Queries
+    // ------------------------------------------------------------------
+
+    private static String capacityJson(Id groupId, Id existingId, String label, String objectName,
+            String role, Integer cap, String filterLogic, List<Map<String, Object>> filters) {
+        Map<String, Object> payload = new Map<String, Object>{
+            'groupId' => groupId,
+            'label' => label,
+            'objectName' => objectName,
+            'role' => role,
+            'cap' => cap,
+            'filterLogic' => filterLogic,
+            'active' => true,
+            'filters' => filters
+        };
+        if (existingId != null) {
+            payload.put('id', existingId);
+        }
+        return JSON.serialize(payload);
+    }
+
+    private static Map<String, Object> filterMap(Integer filterNumber, String fieldName, String operator, String value) {
+        return new Map<String, Object>{
+            'filterNumber' => filterNumber,
+            'fieldName' => fieldName,
+            'operator' => operator,
+            'valueSource' => 'Literal',
+            'value' => value
+        };
+    }
+
+    @IsTest
+    static void testSaveAndGetCapacityQueryRoundTripsWithFilters() {
+        WSM_Round_Robin_Group__c g = seedGroup('Least Loaded');
+
+        Test.startTest();
+        Id capacityId = WSM_RR_AdminController.saveCapacityQuery(capacityJson(
+            g.Id, null, 'Open Accounts', 'Account', 'Cap and Load Metric', 25, '1 AND 2',
+            new List<Map<String, Object>>{
+                filterMap(1, 'Name', 'starts with', 'Acme'),
+                filterMap(2, 'Industry', 'equals', 'Banking')
+            }));
+        List<WSM_RR_AdminController.CapacityQueryRow> rows = WSM_RR_AdminController.getCapacityQueries(g.Id);
+        Test.stopTest();
+
+        System.assertNotEquals(null, capacityId, 'Saving must return the new record Id.');
+        System.assertEquals(1, rows.size(), 'The group must report its one capacity query.');
+        WSM_RR_AdminController.CapacityQueryRow row = rows[0];
+        System.assertEquals('Open Accounts', row.label, 'The label must round-trip.');
+        System.assertEquals(25, row.cap, 'The cap must round-trip.');
+        System.assertEquals('1 AND 2', row.filterLogic, 'The filter logic must round-trip.');
+        System.assertEquals(2, row.filters.size(), 'Both filters must round-trip.');
+        System.assertEquals(true, row.valid, 'A well-formed query must come back valid. Reason: ' + row.invalidReason);
+    }
+
+    @IsTest
+    static void testGetCapacityQueriesReportsTheCompilerReason() {
+        WSM_Round_Robin_Group__c g = seedGroup('Strict Rotation');
+
+        Test.startTest();
+        WSM_RR_AdminController.saveCapacityQuery(capacityJson(
+            g.Id, null, 'Broken', 'Account', 'Cap', 5, null,
+            new List<Map<String, Object>>{ filterMap(1, 'NotAField__c', 'equals', 'x') }));
+        List<WSM_RR_AdminController.CapacityQueryRow> rows = WSM_RR_AdminController.getCapacityQueries(g.Id);
+        Test.stopTest();
+
+        System.assertEquals(false, rows[0].valid, 'A field that does not exist must come back invalid.');
+        System.assert(rows[0].invalidReason.contains('does not exist'),
+            'The editor needs the reason, not just a failure flag: ' + rows[0].invalidReason);
+    }
+
+    @IsTest
+    static void testSaveCapacityQueryReplacesFiltersRatherThanAppending() {
+        WSM_Round_Robin_Group__c g = seedGroup('Strict Rotation');
+        Id capacityId = WSM_RR_AdminController.saveCapacityQuery(capacityJson(
+            g.Id, null, 'Counts', 'Account', 'Cap', 5, null,
+            new List<Map<String, Object>>{
+                filterMap(1, 'Name', 'equals', 'a'),
+                filterMap(2, 'Industry', 'equals', 'Banking')
+            }));
+
+        Test.startTest();
+        WSM_RR_AdminController.saveCapacityQuery(capacityJson(
+            g.Id, capacityId, 'Counts', 'Account', 'Cap', 5, null,
+            new List<Map<String, Object>>{ filterMap(1, 'Name', 'equals', 'b') }));
+        Test.stopTest();
+
+        System.assertEquals(1, [SELECT COUNT() FROM WSM_Capacity_Filter__c WHERE WSM_Capacity_Query__c = :capacityId],
+            'Filters are replaced wholesale on save. Appending would leave Filter Logic pointing at rows the admin thought they deleted.');
+        System.assertEquals(1, [SELECT COUNT() FROM WSM_Capacity_Query__c WHERE WSM_Group__c = :g.Id],
+            'Re-saving with an Id must update in place, not create a second row.');
+    }
+
+    @IsTest
+    static void testSaveCapacityQueryAutoNumbersFiltersWhenOmitted() {
+        WSM_Round_Robin_Group__c g = seedGroup('Strict Rotation');
+
+        Test.startTest();
+        Id capacityId = WSM_RR_AdminController.saveCapacityQuery(capacityJson(
+            g.Id, null, 'Counts', 'Account', 'Cap', 5, null,
+            new List<Map<String, Object>>{
+                new Map<String, Object>{ 'fieldName' => 'Name', 'operator' => 'equals', 'value' => 'a' },
+                new Map<String, Object>{ 'fieldName' => 'Industry', 'operator' => 'equals', 'value' => 'Banking' }
+            }));
+        Test.stopTest();
+
+        List<WSM_Capacity_Filter__c> filters = [
+            SELECT WSM_Filter_Number__c FROM WSM_Capacity_Filter__c
+            WHERE WSM_Capacity_Query__c = :capacityId ORDER BY WSM_Filter_Number__c];
+        System.assertEquals(1, filters[0].WSM_Filter_Number__c, 'A filter with no number must fall back to its position.');
+        System.assertEquals(2, filters[1].WSM_Filter_Number__c, 'A filter with no number must fall back to its position.');
+    }
+
+    @IsTest
+    static void testSaveCapacityQueryRequiresGroupAndLabel() {
+        WSM_Round_Robin_Group__c g = seedGroup('Strict Rotation');
+
+        Test.startTest();
+        try {
+            WSM_RR_AdminController.saveCapacityQuery(capacityJson(null, null, 'X', 'Account', 'Cap', 1, null, null));
+            System.assert(false, 'A capacity query with no group must be rejected.');
+        } catch (AuraHandledException expected) {
+            System.assert(true);
+        }
+        try {
+            WSM_RR_AdminController.saveCapacityQuery(capacityJson(g.Id, null, '  ', 'Account', 'Cap', 1, null, null));
+            System.assert(false, 'A capacity query with no label must be rejected.');
+        } catch (AuraHandledException expected) {
+            System.assert(true);
+        }
+        Test.stopTest();
+    }
+
+    @IsTest
+    static void testDeleteCapacityQueryCascadesItsFilters() {
+        WSM_Round_Robin_Group__c g = seedGroup('Strict Rotation');
+        Id capacityId = WSM_RR_AdminController.saveCapacityQuery(capacityJson(
+            g.Id, null, 'Counts', 'Account', 'Cap', 5, null,
+            new List<Map<String, Object>>{ filterMap(1, 'Name', 'equals', 'a') }));
+
+        Test.startTest();
+        WSM_RR_AdminController.deleteCapacityQuery(capacityId);
+        Test.stopTest();
+
+        System.assertEquals(0, [SELECT COUNT() FROM WSM_Capacity_Query__c WHERE Id = :capacityId]);
+        System.assertEquals(0, [SELECT COUNT() FROM WSM_Capacity_Filter__c],
+            'Master-detail must take the filters with the parent.');
+    }
+
+    @IsTest
+    static void testValidateCapacityQueryChecksWithoutSaving() {
+        WSM_Round_Robin_Group__c g = seedGroup('Strict Rotation');
+
+        Test.startTest();
+        WSM_RR_AdminController.CapacityQueryRow good = WSM_RR_AdminController.validateCapacityQuery(capacityJson(
+            g.Id, null, 'Good', 'Account', 'Cap', 5, null,
+            new List<Map<String, Object>>{ filterMap(1, 'Name', 'equals', 'a') }));
+        WSM_RR_AdminController.CapacityQueryRow bad = WSM_RR_AdminController.validateCapacityQuery(capacityJson(
+            g.Id, null, 'Bad', 'Nope__c', 'Cap', 5, null,
+            new List<Map<String, Object>>{ filterMap(1, 'Name', 'equals', 'a') }));
+        Test.stopTest();
+
+        System.assertEquals(true, good.valid, 'A valid draft must validate. Reason: ' + good.invalidReason);
+        System.assertEquals(false, bad.valid, 'An unknown object must not validate.');
+        System.assertEquals(0, [SELECT COUNT() FROM WSM_Capacity_Query__c],
+            'Validating a draft must not write anything; the admin has not pressed save yet.');
+    }
+
+    @IsTest
+    static void testDescribeCountableObjectsIncludesAccountAndSortsByLabel() {
+        Test.startTest();
+        List<WSM_RR_AdminController.ObjectOption> options = WSM_RR_AdminController.describeCountableObjects();
+        Test.stopTest();
+
+        Boolean foundAccount = false;
+        for (WSM_RR_AdminController.ObjectOption option : options) {
+            if (option.apiName == 'Account') {
+                foundAccount = true;
+            }
+        }
+        System.assert(foundAccount, 'Account must be offered as something an admin can count.');
+        System.assert(options.size() > 1, 'More than one object must be offered.');
+        for (Integer i = 1; i < options.size(); i++) {
+            System.assert(options[i - 1].label.compareTo(options[i].label) <= 0,
+                'Options must be sorted by label so the dropdown is navigable.');
+        }
+    }
+
+    @IsTest
+    static void testDescribeFilterableFieldsCarriesTypesAndPicklistValues() {
+        Test.startTest();
+        List<WSM_RR_AdminController.FieldOption> fields = WSM_RR_AdminController.describeFilterableFields('Account');
+        Test.stopTest();
+
+        Map<String, WSM_RR_AdminController.FieldOption> byName = new Map<String, WSM_RR_AdminController.FieldOption>();
+        for (WSM_RR_AdminController.FieldOption f : fields) {
+            byName.put(f.apiName, f);
+        }
+        System.assert(byName.containsKey('Name'), 'A filterable standard field must be offered.');
+        System.assertEquals('STRING', byName.get('Name').fieldType, 'The editor needs the type to pick sensible operators.');
+        System.assert(byName.containsKey('Industry'), 'Industry must be offered.');
+        System.assert(byName.get('Industry').picklistValues.size() > 0,
+            'Picklist values must come back so the editor can offer a value picker instead of free text.');
+        System.assertEquals(true, byName.get('Industry').groupable,
+            'Groupability must be reported, because only a groupable field can take its value from the routed record.');
+    }
+
+    @IsTest
+    static void testDescribeFilterableFieldsRejectsAnUnknownObject() {
+        Test.startTest();
+        try {
+            WSM_RR_AdminController.describeFilterableFields('NotAnObjectAnywhere__c');
+            System.assert(false, 'An unknown object must be rejected.');
+        } catch (AuraHandledException expected) {
+            System.assert(true);
+        }
+        System.assertEquals(0, WSM_RR_AdminController.describeFilterableFields('').size(),
+            'A blank object name must return nothing rather than throwing.');
+        Test.stopTest();
+    }
+
+    @IsTest
+    static void testUpdateMembersWritesTier() {
+        WSM_Round_Robin_Group__c g = seedGroup('Strict Rotation');
+        List<User> users = testUsers();
+        WSM_Round_Robin_Member__c m = seedMember(g.Id, users[0].Id, 0);
+
+        Test.startTest();
+        WSM_RR_AdminController.updateMembers(JSON.serialize(new List<Map<String, Object>>{
+            new Map<String, Object>{ 'memberId' => m.Id, 'tier' => 2 }
+        }));
+        Test.stopTest();
+
+        System.assertEquals(2, [SELECT WSM_Tier__c FROM WSM_Round_Robin_Member__c WHERE Id = :m.Id].WSM_Tier__c,
+            'The editor must be able to move someone onto the overflow bench.');
+    }
+
+    @IsTest
+    static void testGetGroupDetailReportsTierAndDefaultsBlankToOne() {
+        WSM_Round_Robin_Group__c g = seedGroup('Strict Rotation');
+        List<User> users = testUsers();
+        WSM_Round_Robin_Member__c first = seedMember(g.Id, users[0].Id, 0);
+        WSM_Round_Robin_Member__c second = seedMember(g.Id, users[1].Id, 1);
+        second.WSM_Tier__c = 3;
+        update second;
+        first.WSM_Tier__c = null;
+        update first;
+
+        Test.startTest();
+        WSM_RR_AdminController.GroupDetail detail = WSM_RR_AdminController.getGroupDetail(g.Id);
+        Test.stopTest();
+
+        Map<Id, Integer> tierByMember = new Map<Id, Integer>();
+        for (WSM_RR_AdminController.MemberRow row : detail.members) {
+            tierByMember.put(row.memberId, row.tier);
+        }
+        System.assertEquals(1, tierByMember.get(first.Id), 'A blank Tier must be reported as 1, matching how the engine reads it.');
+        System.assertEquals(3, tierByMember.get(second.Id), 'A real Tier must be reported as-is.');
+    }
+
+    @IsTest
+    static void testSimulateSurfacesCapacityReadingsWarningsAndTier() {
+        WSM_Round_Robin_Group__c g = seedGroup('Least Loaded');
+        List<User> users = testUsers();
+        seedMember(g.Id, users[0].Id, 0);
+        WSM_RR_AdminController.saveCapacityQuery(capacityJson(
+            g.Id, null, 'Book Size', 'Account', 'Cap and Load Metric', 10, null,
+            new List<Map<String, Object>>{ filterMap(1, 'Name', 'starts with', 'RRSim') }));
+        WSM_RR_AdminController.saveCapacityQuery(capacityJson(
+            g.Id, null, 'Broken One', 'Account', 'Cap', 10, null,
+            new List<Map<String, Object>>{ filterMap(1, 'NopeField__c', 'equals', 'x') }));
+        insert new Account(Name = 'RRSim One', OwnerId = users[0].Id);
+
+        Test.startTest();
+        WSM_RR_AdminController.SimulationResult result = WSM_RR_AdminController.simulate(g.Id, false);
+        Test.stopTest();
+
+        System.assertEquals('ASSIGNED', result.status, 'One member under the cap must be assignable.');
+        System.assertEquals(1, result.assignedFromTier, 'The pick must be reported as coming from tier 1.');
+        System.assertEquals(1, result.verdicts.size());
+        WSM_RR_AdminController.Verdict verdict = result.verdicts[0];
+        System.assertEquals(1, verdict.tier, 'The verdict must carry the tier.');
+        System.assertEquals(1, verdict.capacity.size(), 'Only the compiling capacity query can produce a reading.');
+        System.assertEquals('Book Size', verdict.capacity[0].label);
+        System.assertEquals(1, verdict.capacity[0].count, 'The reading must show the real count off the org.');
+        System.assertEquals(1, verdict.externalLoad, 'The load must be exposed so the simulator can explain the ranking.');
+        System.assertEquals(1, result.warnings.size(), 'The broken capacity query must be reported to the admin.');
+        System.assert(result.warnings[0].contains('Broken One'), 'The warning must name it: ' + result.warnings[0]);
+    }
 }

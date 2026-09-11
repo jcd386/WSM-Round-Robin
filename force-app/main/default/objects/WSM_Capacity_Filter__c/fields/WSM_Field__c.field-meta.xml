@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Field__c</fullName>
+    <caseSensitive>false</caseSensitive>
+    <description>API name of the field to filter on, on the capacity query&apos;s object. Validated against the org schema before any query runs; the schema&apos;s own resolved name is what goes into the SOQL, never the typed string.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>API name of the field to filter, e.g. Employer_Status__c.</inlineHelpText>
+    <label>Field</label>
+    <length>80</length>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

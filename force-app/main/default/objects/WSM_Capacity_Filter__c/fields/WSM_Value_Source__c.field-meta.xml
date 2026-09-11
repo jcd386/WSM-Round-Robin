@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Value_Source__c</fullName>
+    <description>Where the comparison value comes from. Literal uses Value as typed, converted to the field&apos;s type and passed as a bind variable. Relative Date uses a Salesforce date literal from a closed whitelist, e.g. LAST_N_DAYS:30, which is how you make a count drain over time instead of growing forever. Routed Record Field reads Value off the record being routed, which lets a cap depend on the incoming record; it supports the equals operator only.</description>
+    <inlineHelpText>Literal, a date literal like LAST_N_DAYS:30, or a field off the record being routed.</inlineHelpText>
+    <label>Value Source</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Literal</fullName>
+                <default>true</default>
+                <label>Literal</label>
+            </value>
+            <value>
+                <fullName>Relative Date</fullName>
+                <default>false</default>
+                <label>Relative Date</label>
+            </value>
+            <value>
+                <fullName>Routed Record Field</fullName>
+                <default>false</default>
+                <label>Routed Record Field</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

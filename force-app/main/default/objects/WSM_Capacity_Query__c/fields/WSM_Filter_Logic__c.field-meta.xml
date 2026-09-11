@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Filter_Logic__c</fullName>
+    <caseSensitive>false</caseSensitive>
+    <description>How the child Capacity Filter rows combine, written the same way Flow writes it, e.g. 1 AND 2 AND (3 OR 4) where each number is a filter&apos;s Filter Number. Leave blank to AND every filter together. Only the numbers present on the child rows, the words AND and OR, and parentheses are accepted.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>e.g. 1 AND 2 AND (3 OR 4). Blank means AND everything.</inlineHelpText>
+    <label>Filter Logic</label>
+    <length>255</length>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

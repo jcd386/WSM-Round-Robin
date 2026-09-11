@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Group__c</fullName>
+    <description>The Round Robin Group this capacity query belongs to. Deleting the group deletes its capacity queries.</description>
+    <inlineHelpText>Parent group this capacity rule applies to.</inlineHelpText>
+    <label>Group</label>
+    <referenceTo>WSM_Round_Robin_Group__c</referenceTo>
+    <relationshipLabel>Capacity Queries</relationshipLabel>
+    <relationshipName>Capacity_Queries</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>

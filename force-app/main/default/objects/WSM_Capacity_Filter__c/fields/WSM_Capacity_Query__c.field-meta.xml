@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Capacity_Query__c</fullName>
+    <description>The capacity query this filter row belongs to. Deleting the capacity query deletes its filters.</description>
+    <inlineHelpText>Parent capacity query.</inlineHelpText>
+    <label>Capacity Query</label>
+    <referenceTo>WSM_Capacity_Query__c</referenceTo>
+    <relationshipLabel>Filters</relationshipLabel>
+    <relationshipName>Filters</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>

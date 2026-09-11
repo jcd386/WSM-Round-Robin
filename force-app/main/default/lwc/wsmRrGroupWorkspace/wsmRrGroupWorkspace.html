@@ -95,6 +95,13 @@
                         onrefresh={handleChildRefresh}
                     ></c-wsm-rr-member-table>
                 </lightning-tab>
+                <lightning-tab label="Capacity" value="capacity">
+                    <c-wsm-rr-capacity-panel
+                        group-id={effectiveGroupId}
+                        algorithm={grp.algorithm}
+                        onrefresh={handleChildRefresh}
+                    ></c-wsm-rr-capacity-panel>
+                </lightning-tab>
                 <lightning-tab label="Settings" value="settings">
                     <c-wsm-rr-group-editor grp={grp} onrefresh={handleChildRefresh}></c-wsm-rr-group-editor>
                 </lightning-tab>
@@ -118,6 +125,7 @@
         <c-wsm-rr-simulator
             group-id={effectiveGroupId}
             group-name={grp.name}
+            algorithm={grp.algorithm}
             onrefresh={handleChildRefresh}
             onclose={closeSimulator}
         ></c-wsm-rr-simulator>

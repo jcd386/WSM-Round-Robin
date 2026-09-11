@@ -9,6 +9,17 @@
                 <p class="slds-text-body_small sim__subtitle">Dry-run the algorithm without affecting real records.</p>
             </header>
             <div class="slds-modal__content slds-p-around_medium">
+                <template lwc:if={hasWarnings}>
+                    <div class="sim__warnings">
+                        <template for:each={warningRows} for:item="w">
+                            <p key={w.key} class="sim__warningline">
+                                <lightning-icon icon-name="utility:warning" size="x-small" variant="warning" class="sim__warningicon" title="Warning"></lightning-icon>
+                                <span>{w.text}</span>
+                            </p>
+                        </template>
+                    </div>
+                </template>
+
                 <div class="sim__controls">
                     <lightning-input
                         type="checkbox"
@@ -30,23 +41,46 @@
                                 <p class="sim__resultdetail">{resultDetail}</p>
                             </template>
                             <template lwc:if={committedLogId}>
-                                <p class="sim__committed">Committed — <a href={committedLogUrl}>Log {committedLogId}</a></p>
+                                <p class="sim__committed">Committed, see <a href={committedLogUrl}>Log {committedLogId}</a></p>
+                            </template>
+                            <template lwc:if={showAssignedFromTier}>
+                                <p class="sim__filledtier">{assignedFromTierLabel}</p>
                             </template>
                         </div>
                     </div>
 
                     <table class="sim__table">
                         <thead>
-                            <tr><th>Member</th><th class="sim__col-elig">Eligible</th><th>Reason</th></tr>
+                            <tr>
+                                <th>Member</th>
+                                <th class="sim__col-tier">Tier</th>
+                                <th class="sim__col-elig">Eligible</th>
+                                <th>Reason</th>
+                                <template lwc:if={showExternalLoadColumn}>
+                                    <th class="sim__col-load">Load</th>
+                                </template>
+                                <th>Capacity</th>
+                            </tr>
                         </thead>
                         <tbody>
                             <template for:each={verdictRows} for:item="v">
-                                <tr key={v.memberId}>
+                                <tr key={v.memberId} class={v.rowClass}>
                                     <td>{v.userName}</td>
+                                    <td class="sim__col-tier">{v.tier}</td>
                                     <td class="sim__col-elig">
                                         <lightning-icon icon-name={v.icon} variant={v.variant} size="x-small"></lightning-icon>
                                     </td>
-                                    <td class="slds-text-color_weak">{v.skipReason}</td>
+                                    <td class="slds-text-color_weak">{v.reasonText}</td>
+                                    <template lwc:if={showExternalLoadColumn}>
+                                        <td class="sim__col-load">{v.externalLoadLabel}</td>
+                                    </template>
+                                    <td class="sim__col-capacity">
+                                        <template lwc:if={v.hasCapacity}>
+                                            <template for:each={v.capacityChips} for:item="chip">
+                                                <span key={chip.key} class={chip.cls}>{chip.text}</span>
+                                            </template>
+                                        </template>
+                                    </td>
                                 </tr>
                             </template>
                         </tbody>

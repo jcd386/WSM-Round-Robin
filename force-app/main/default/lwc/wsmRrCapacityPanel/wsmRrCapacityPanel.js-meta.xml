@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>64.0</apiVersion>
+    <isExposed>false</isExposed>
+    <masterLabel>WSM Round Robin Capacity Panel</masterLabel>
+    <description>Capacity tab: plain-language editor for Capacity Queries: counts of existing records used as a hard cap and/or a load metric, with live compiler validation.</description>
+</LightningComponentBundle>

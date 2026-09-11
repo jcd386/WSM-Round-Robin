@@ -1,7 +1,11 @@
 /**
- * Runs the ordered gate chain (Active → Out of Office → Capacity, per the plan) against
- * one member and returns the first skip reason encountered, or null if the member
- * clears every gate.
+ * Runs the ordered gate chain (Active → Out of Office → Period Capacity → Capacity
+ * Queries) against one member and returns the first skip reason encountered, or null if
+ * the member clears every gate.
+ *
+ * Capacity Queries run last because they are the most specific and their skip reasons are
+ * the most expensive to read: "Inactive" is more useful than "At capacity on Active
+ * Employers (38/20)" when both are true.
  */
 public inherited sharing class WSM_EligibilityPipeline {
 
@@ -15,7 +19,8 @@ public inherited sharing class WSM_EligibilityPipeline {
         return new WSM_EligibilityPipeline(new List<WSM_EligibilityRule>{
             new WSM_ActiveRule(),
             new WSM_OutOfOfficeRule(),
-            new WSM_CapacityRule()
+            new WSM_CapacityRule(),
+            new WSM_CapacityQueryRule()
         });
     }
 

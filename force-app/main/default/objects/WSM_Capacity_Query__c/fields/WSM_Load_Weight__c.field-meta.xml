@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Load_Weight__c</fullName>
+    <description>Multiplier applied to this count when several Load Metric rows are combined into one load score. Defaults to 1. Use 2 to make one count matter twice as much as another, or 0.5 to make it matter half as much. Ignored when Role is Cap only.</description>
+    <inlineHelpText>How much this count counts toward the load score. 1 is normal.</inlineHelpText>
+    <label>Load Weight</label>
+    <precision>5</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+</CustomField>

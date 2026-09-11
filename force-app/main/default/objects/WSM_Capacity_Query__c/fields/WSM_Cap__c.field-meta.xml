@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Cap__c</fullName>
+    <description>Maximum count before this member is skipped. Only read when Role includes Cap. A cap of 0 blocks the member outright. Leave blank to make a Cap-role row effectively uncapped, which is only useful while testing.</description>
+    <inlineHelpText>Block the member once the count reaches this number.</inlineHelpText>
+    <label>Cap</label>
+    <precision>6</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+</CustomField>

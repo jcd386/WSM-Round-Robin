@@ -1,0 +1,316 @@
+<template>
+    <div class="cq">
+        <div class="cq__topbar">
+            <div class="cq__titles">
+                <h2 class="cq__title">Capacity</h2>
+                <p class="cq__caption">Count existing records to cap how much work someone can get, or to see who has the least on their plate right now.</p>
+            </div>
+            <button class="slds-button slds-button_brand cq__addbtn" onclick={handleAddQuery}>
+                <lightning-icon icon-name="utility:add" size="xx-small" variant="inverse" class="cq__addicon"></lightning-icon> Add a count
+            </button>
+        </div>
+
+        <template lwc:if={hasLeastLoadedWarning}>
+            <div class="cq__warning">
+                <lightning-icon icon-name="utility:warning" size="x-small" variant="warning" class="cq__warningicon" title="Warning"></lightning-icon>
+                <span>{leastLoadedWarning}</span>
+            </div>
+        </template>
+
+        <template lwc:if={isLoading}>
+            <div class="cq__loading slds-align_absolute-center">
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <template lwc:if={isEmpty}>
+            <div class="cq__empty">
+                <lightning-icon icon-name="utility:filterList" size="medium" class="cq__emptyicon" title="No counts yet"></lightning-icon>
+                <p class="cq__emptytext">A count looks at existing records, like open Accounts someone owns, so you can cap how much work they get or see who has the least on their plate. Add one to get started.</p>
+                <button class="slds-button slds-button_brand" onclick={handleAddQuery}>Add a count</button>
+            </div>
+        </template>
+
+        <template lwc:if={hasQueries}>
+            <ul class="cq__list">
+                <template for:each={rows} for:item="row">
+                    <li key={row.key} class={row.cardClass}>
+                        <div class="cq__cardhead" data-row={row.clientId} onclick={toggleCollapse}>
+                            <lightning-icon icon-name={row.toggleIcon} size="x-small" class="cq__toggleicon"></lightning-icon>
+                            <span class="cq__cardlabel slds-truncate" title={row.label}>{row.label}</span>
+                            <span class="cq__cardsummary slds-truncate">{row.summaryLine}</span>
+                            <span class={row.statusPill.cls}>{row.statusPill.text}</span>
+                        </div>
+
+                        <template lwc:if={row.expanded}>
+                            <div class="cq__cardbody">
+                                <div class="cq__grid">
+                                    <div class="cq__col">
+                                        <lightning-input
+                                            label="Label"
+                                            required
+                                            value={row.label}
+                                            data-row={row.clientId}
+                                            onchange={handleLabelChange}
+                                            field-level-help="Short name for this count. It shows up in skip reasons, so keep it plain, like Open Accounts."
+                                        ></lightning-input>
+
+                                        <lightning-combobox
+                                            class="slds-m-top_small"
+                                            label="Object"
+                                            required
+                                            placeholder="Choose an object"
+                                            options={objectOptions}
+                                            value={row.objectName}
+                                            data-row={row.clientId}
+                                            onchange={handleObjectChange}
+                                            field-level-help="What kind of record to count, like Account or Case."
+                                        ></lightning-combobox>
+
+                                        <lightning-combobox
+                                            class="slds-m-top_small"
+                                            label="Which field holds the person"
+                                            placeholder="OwnerId"
+                                            options={row.ownerFieldOptions}
+                                            value={row.ownerField}
+                                            data-row={row.clientId}
+                                            onchange={handleOwnerFieldChange}
+                                            field-level-help="The field on each counted record that says who owns it. Almost always Owner."
+                                        ></lightning-combobox>
+
+                                        <div class="slds-form-element slds-m-top_small">
+                                            <span class="slds-form-element__label cq__inlinelabel">Role <lightning-helptext content="Cap blocks someone once this count reaches the limit. Load Metric decides who has the least on their plate. Cap and Load Metric does both from one count."></lightning-helptext></span>
+                                            <div class="slds-button-group cq__rolebtngroup" role="group">
+                                                <template for:each={row.roleOptions} for:item="opt">
+                                                    <button key={opt.value} class={opt.buttonClass} data-row={row.clientId} data-value={opt.value} onclick={handleRoleClick}>{opt.label}</button>
+                                                </template>
+                                            </div>
+                                        </div>
+
+                                        <div class="cq__pair slds-m-top_small">
+                                            <template lwc:if={row.showCap}>
+                                                <lightning-input
+                                                    type="number"
+                                                    label="Cap"
+                                                    min="0"
+                                                    value={row.cap}
+                                                    data-row={row.clientId}
+                                                    onchange={handleCapChange}
+                                                    field-level-help="The most this count can reach before members with it are blocked."
+                                                ></lightning-input>
+                                            </template>
+                                            <template lwc:if={row.showLoadWeight}>
+                                                <lightning-input
+                                                    type="number"
+                                                    step="0.1"
+                                                    label="Load Weight"
+                                                    value={row.loadWeight}
+                                                    data-row={row.clientId}
+                                                    onchange={handleLoadWeightChange}
+                                                    field-level-help="Multiplies this count when ranking who has the least work. Higher means it counts for more."
+                                                ></lightning-input>
+                                            </template>
+                                        </div>
+
+                                        <lightning-input
+                                            class="slds-m-top_small"
+                                            label="Filter Logic"
+                                            placeholder="1 AND (2 OR 3)"
+                                            value={row.filterLogic}
+                                            data-row={row.clientId}
+                                            onchange={handleFilterLogicChange}
+                                            field-level-help="How the filters below combine. Leave blank and every filter must match."
+                                        ></lightning-input>
+                                    </div>
+
+                                    <div class="cq__col">
+                                        <lightning-input
+                                            type="toggle"
+                                            label="Active"
+                                            checked={row.active}
+                                            data-row={row.clientId}
+                                            onchange={handleActiveToggle}
+                                            field-level-help="Off means this count is skipped everywhere, as if it did not exist."
+                                        ></lightning-input>
+
+                                        <lightning-input
+                                            type="number"
+                                            class="slds-m-top_small"
+                                            label="Sort Order"
+                                            value={row.sortOrder}
+                                            data-row={row.clientId}
+                                            onchange={handleSortOrderChange}
+                                            field-level-help="Controls the order counts are listed and checked in. Lower numbers go first."
+                                        ></lightning-input>
+
+                                        <lightning-textarea
+                                            class="slds-m-top_small"
+                                            label="Description"
+                                            value={row.description}
+                                            data-row={row.clientId}
+                                            onchange={handleDescriptionChange}
+                                            field-level-help="Notes for your team about what this count is for. Only shown here."
+                                        ></lightning-textarea>
+                                    </div>
+                                </div>
+
+                                <div class="cq__filters">
+                                    <div class="cq__filtershead">
+                                        <span class="cq__filterslabel">Counted where... <lightning-helptext content="Each filter narrows down which records get counted. Add as many as you need, then use Filter Logic above to say how they combine."></lightning-helptext></span>
+                                        <button class="slds-button slds-button_neutral cq__addfilterbtn" data-row={row.clientId} onclick={handleAddFilter}>Add filter</button>
+                                    </div>
+
+                                    <template lwc:if={row.hasFilters}>
+                                        <template for:each={row.filters} for:item="filter">
+                                            <div key={filter.clientId} class="cq__filterrow">
+                                                <lightning-combobox
+                                                    class="cq__filterfield"
+                                                    label="Field"
+                                                    variant="label-hidden"
+                                                    placeholder="Field"
+                                                    options={filter.fieldOptions}
+                                                    value={filter.fieldName}
+                                                    data-row={row.clientId}
+                                                    data-filter={filter.clientId}
+                                                    onchange={handleFilterFieldChange}
+                                                ></lightning-combobox>
+                                                <lightning-combobox
+                                                    class="cq__filterop"
+                                                    label="Operator"
+                                                    variant="label-hidden"
+                                                    options={filter.operatorOptions}
+                                                    value={filter.operator}
+                                                    data-row={row.clientId}
+                                                    data-filter={filter.clientId}
+                                                    onchange={handleFilterOperatorChange}
+                                                ></lightning-combobox>
+                                                <template lwc:if={filter.showValueSourcePicker}>
+                                                    <lightning-combobox
+                                                        class="cq__filtersrc"
+                                                        label="Value Source"
+                                                        variant="label-hidden"
+                                                        options={filter.valueSourceOptions}
+                                                        value={filter.valueSource}
+                                                        data-row={row.clientId}
+                                                        data-filter={filter.clientId}
+                                                        onchange={handleFilterValueSourceChange}
+                                                    ></lightning-combobox>
+                                                </template>
+                                                <template lwc:if={filter.showLiteralPicklist}>
+                                                    <lightning-combobox
+                                                        class="cq__filterval"
+                                                        label="Value"
+                                                        variant="label-hidden"
+                                                        placeholder="Value"
+                                                        options={filter.literalOptions}
+                                                        value={filter.value}
+                                                        data-row={row.clientId}
+                                                        data-filter={filter.clientId}
+                                                        onchange={handleFilterValueChange}
+                                                    ></lightning-combobox>
+                                                </template>
+                                                <template lwc:if={filter.showLiteralText}>
+                                                    <lightning-input
+                                                        class="cq__filterval"
+                                                        label="Value"
+                                                        variant="label-hidden"
+                                                        placeholder={filter.valuePlaceholder}
+                                                        value={filter.value}
+                                                        data-row={row.clientId}
+                                                        data-filter={filter.clientId}
+                                                        onchange={handleFilterValueChange}
+                                                    ></lightning-input>
+                                                </template>
+                                                <template lwc:if={filter.showRelativeDate}>
+                                                    <lightning-combobox
+                                                        class="cq__filterval"
+                                                        label="When"
+                                                        variant="label-hidden"
+                                                        options={filter.relativeOptions}
+                                                        value={filter.relativeSelectValue}
+                                                        data-row={row.clientId}
+                                                        data-filter={filter.clientId}
+                                                        onchange={handleFilterRelativeChange}
+                                                    ></lightning-combobox>
+                                                    <template lwc:if={filter.isCustomRelative}>
+                                                        <lightning-input
+                                                            type="number"
+                                                            class="cq__filtercustomn"
+                                                            label="Number"
+                                                            variant="label-hidden"
+                                                            min="1"
+                                                            value={filter.customN}
+                                                            data-row={row.clientId}
+                                                            data-filter={filter.clientId}
+                                                            onchange={handleFilterCustomNChange}
+                                                        ></lightning-input>
+                                                        <lightning-combobox
+                                                            class="cq__filtercustomunit"
+                                                            label="Unit"
+                                                            variant="label-hidden"
+                                                            options={customUnitOptions}
+                                                            value={filter.customUnit}
+                                                            data-row={row.clientId}
+                                                            data-filter={filter.clientId}
+                                                            onchange={handleFilterCustomUnitChange}
+                                                        ></lightning-combobox>
+                                                    </template>
+                                                </template>
+                                                <template lwc:if={filter.showRoutedField}>
+                                                    <lightning-input
+                                                        class="cq__filterval"
+                                                        label="Routed Record Field"
+                                                        variant="label-hidden"
+                                                        placeholder="Field on the record being routed"
+                                                        value={filter.routedRecordField}
+                                                        data-row={row.clientId}
+                                                        data-filter={filter.clientId}
+                                                        onchange={handleFilterRoutedFieldChange}
+                                                    ></lightning-input>
+                                                </template>
+                                                <button class="slds-button slds-button_icon cq__filterremove" title="Remove filter" data-row={row.clientId} data-filter={filter.clientId} onclick={handleRemoveFilter}>
+                                                    <lightning-icon icon-name="utility:close" size="x-small"></lightning-icon>
+                                                </button>
+                                            </div>
+                                        </template>
+                                    </template>
+                                    <template lwc:if={row.noFilters}>
+                                        <p class="cq__nofilters slds-text-color_weak">No filters yet. Add one, otherwise this counts every record on the object.</p>
+                                    </template>
+                                </div>
+
+                                <div class="cq__cardfooter">
+                                    <template lwc:if={row.showInvalidReason}>
+                                        <p class="cq__invalidmsg">{row.invalidReason}</p>
+                                    </template>
+                                    <template lwc:if={row.showValidMsg}>
+                                        <p class="cq__validmsg">This will work.</p>
+                                    </template>
+                                    <span class="cq__spacer"></span>
+                                    <button class="slds-button slds-button_neutral" data-row={row.clientId} onclick={handleDeleteClick}>{row.deleteLabel}</button>
+                                    <button class="slds-button slds-button_brand" disabled={row.saving} data-row={row.clientId} onclick={handleSave}>{row.saveLabel}</button>
+                                </div>
+                            </div>
+                        </template>
+                    </li>
+                </template>
+            </ul>
+        </template>
+    </div>
+
+    <template lwc:if={showRemoveConfirm}>
+        <section class="slds-modal slds-fade-in-open slds-modal_small" role="dialog">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header"><h2 class="slds-modal__title">Delete "{removeTargetLabel}"?</h2></div>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <p>This permanently deletes the count and its filters. This can't be undone.</p>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick={cancelRemove}>Cancel</button>
+                    <button class="slds-button slds-button_destructive" onclick={confirmRemove}>Delete</button>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

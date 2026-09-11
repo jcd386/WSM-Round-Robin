@@ -49,6 +49,22 @@
     opacity: 0.55;
 }
 
+.mt__row_bench {
+    background: var(--slds-g-color-neutral-base-98, #fafaf9);
+}
+
+.mt__tierdivider td {
+    padding: 4px 14px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #706e6b;
+    background: var(--slds-g-color-neutral-base-95, #f3f3f3);
+    border-bottom: 1px solid var(--slds-g-color-border-base-1, #dddbda);
+    white-space: nowrap;
+}
+
 .mt__col-narrow {
     width: 64px;
 }

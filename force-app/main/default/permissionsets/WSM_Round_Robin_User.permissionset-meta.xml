@@ -30,6 +30,24 @@
         <object>WSM_Assignment_Log__c</object>
         <viewAllRecords>false</viewAllRecords>
     </objectPermissions>
+    <objectPermissions>
+        <allowCreate>false</allowCreate>
+        <allowDelete>false</allowDelete>
+        <allowEdit>false</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>false</modifyAllRecords>
+        <object>WSM_Capacity_Query__c</object>
+        <viewAllRecords>false</viewAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <allowCreate>false</allowCreate>
+        <allowDelete>false</allowDelete>
+        <allowEdit>false</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>false</modifyAllRecords>
+        <object>WSM_Capacity_Filter__c</object>
+        <viewAllRecords>false</viewAllRecords>
+    </objectPermissions>
     <!-- WSM_Round_Robin_Group__c fields: read only -->
     <fieldPermissions>
         <editable>false</editable>
@@ -183,6 +201,94 @@
         <field>WSM_Assignment_Log__c.WSM_Status__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <!-- WSM_Capacity_Query__c fields -->
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>WSM_Capacity_Query__c.WSM_Label__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>WSM_Capacity_Query__c.WSM_Object__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>WSM_Capacity_Query__c.WSM_Owner_Field__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>WSM_Capacity_Query__c.WSM_Role__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>WSM_Capacity_Query__c.WSM_Cap__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>WSM_Capacity_Query__c.WSM_Load_Weight__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>WSM_Capacity_Query__c.WSM_Filter_Logic__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>WSM_Capacity_Query__c.WSM_Active__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>WSM_Capacity_Query__c.WSM_Sort_Order__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>WSM_Capacity_Query__c.WSM_Description__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <!-- WSM_Capacity_Filter__c fields -->
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>WSM_Capacity_Filter__c.WSM_Filter_Number__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>WSM_Capacity_Filter__c.WSM_Field__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>WSM_Capacity_Filter__c.WSM_Operator__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>WSM_Capacity_Filter__c.WSM_Value_Source__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>WSM_Capacity_Filter__c.WSM_Value__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>WSM_Capacity_Filter__c.WSM_Routed_Record_Field__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <!-- WSM_Round_Robin_Member__c new field -->
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>WSM_Round_Robin_Member__c.WSM_Tier__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
     <!-- Apex class access: everything the engine touches at runtime -->
     <classAccesses>
         <apexClass>WSM_RoundRobinInvocable</apexClass>
@@ -258,6 +364,22 @@
     </classAccesses>
     <classAccesses>
         <apexClass>WSM_GroupState</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>WSM_CapacityQueryBuilder</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>WSM_CapacityQueryDef</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>WSM_CapacityQueryRule</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>WSM_ExternalLoadStrategy</apexClass>
         <enabled>true</enabled>
     </classAccesses>
 </PermissionSet>

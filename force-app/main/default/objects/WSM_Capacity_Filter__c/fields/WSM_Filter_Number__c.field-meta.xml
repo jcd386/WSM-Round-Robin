@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Filter_Number__c</fullName>
+    <description>The number this filter is referred to by in the parent&apos;s Filter Logic. Must be unique within the capacity query and start at 1.</description>
+    <inlineHelpText>The number Filter Logic uses to refer to this row. Start at 1.</inlineHelpText>
+    <label>Filter Number</label>
+    <precision>3</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+</CustomField>

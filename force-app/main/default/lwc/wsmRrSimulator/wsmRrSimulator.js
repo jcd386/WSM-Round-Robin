@@ -18,6 +18,7 @@ const STATUS_DETAIL = {
 export default class WsmRrSimulator extends LightningElement {
     @api groupId;
     @api groupName;
+    @api algorithm;
 
     commit = false;
     isRunning = false;
@@ -77,16 +78,87 @@ export default class WsmRrSimulator extends LightningElement {
         return this.committedLogId ? `/${this.committedLogId}` : undefined;
     }
 
+    get hasWarnings() {
+        return !!(this.result && this.result.warnings && this.result.warnings.length);
+    }
+
+    get warningRows() {
+        if (!this.result || !this.result.warnings) {
+            return [];
+        }
+        return this.result.warnings.map((w, idx) => ({ key: idx, text: w }));
+    }
+
+    get showAssignedFromTier() {
+        return !!(this.result && this.result.assignedFromTier > 1);
+    }
+
+    get assignedFromTierLabel() {
+        return this.result ? `Filled from tier ${this.result.assignedFromTier}` : '';
+    }
+
+    get showExternalLoadColumn() {
+        return this.algorithm === 'Least Loaded';
+    }
+
     get verdictRows() {
         if (!this.result || !this.result.verdicts) {
             return [];
         }
-        return this.result.verdicts.map((v) => ({
-            ...v,
-            icon: v.eligible ? 'utility:success' : 'utility:close',
-            variant: v.eligible ? 'success' : 'error',
-            skipReason: v.eligible ? '—' : v.skipReason || 'Not eligible'
-        }));
+        return this.result.verdicts.map((v) => this.buildVerdictRow(v));
+    }
+
+    buildVerdictRow(v) {
+        const notNeeded = v.tierReached === false;
+        let icon;
+        let variant;
+        let reasonText;
+        if (notNeeded) {
+            icon = 'utility:dash';
+            variant = undefined;
+            reasonText = 'Not needed for this pick';
+        } else if (v.eligible) {
+            icon = 'utility:success';
+            variant = 'success';
+            reasonText = 'Eligible';
+        } else {
+            icon = 'utility:close';
+            variant = 'error';
+            reasonText = v.skipReason || 'Not eligible';
+        }
+        return {
+            memberId: v.memberId,
+            userName: v.userName,
+            tier: v.tier,
+            icon,
+            variant,
+            reasonText,
+            externalLoadLabel: v.externalLoad != null ? this.formatLoad(v.externalLoad) : '',
+            capacityChips: (v.capacity || []).map((c) => this.buildCapacityChip(c)),
+            hasCapacity: !!(v.capacity && v.capacity.length),
+            rowClass: 'sim__row' + (notNeeded ? ' sim__row_notneeded' : '')
+        };
+    }
+
+    formatLoad(n) {
+        const num = Number(n);
+        return Number.isInteger(num) ? String(num) : num.toFixed(1);
+    }
+
+    buildCapacityChip(c) {
+        if (c.unavailableReason) {
+            return {
+                key: c.capacityQueryId || c.label,
+                text: `${c.label}: ${c.unavailableReason}`,
+                cls: 'sim__capchip sim__capchip_unavailable'
+            };
+        }
+        const countText = c.cap != null ? `${c.count} / ${c.cap}` : String(c.count);
+        return {
+            key: c.capacityQueryId || c.label,
+            text: `${c.label} ${countText}`,
+            cls: 'sim__capchip' + (c.atCap ? ' sim__capchip_atcap' : '')
+        };
     }
 
     handleCommitToggle(event) {

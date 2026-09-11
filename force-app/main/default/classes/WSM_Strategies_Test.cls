@@ -236,4 +236,64 @@ private class WSM_Strategies_Test {
         System.assert(WSM_StrategyFactory.create('Least Assigned', 'Median', warnings) instanceof WSM_LeastAssignedStrategy);
         System.assertEquals(0, warnings.size(), 'None of the three canonical algorithm values should produce a warning.');
     }
+
+    // ---------- Weighted clamping ----------
+
+    @isTest
+    static void weighted_clampsWeightBelowOneAndAboveOneHundred() {
+        // The member trigger already enforces 1-100, so these values can only arrive via
+        // Apex or a data load. The strategy must still produce a sane stride rather than
+        // dividing by zero or handing one seat an effectively infinite share. Weight does
+        // not decide the FIRST pick here: both seats sit at rotation 0, so the tie falls
+        // to Sort Order. Weight shows up in the stride each winner is pushed forward by.
+        WSM_MemberState tooLow = memberState(0, 0, null, 0);
+        WSM_MemberState tooHigh = memberState(500, 0, null, 1);
+
+        WSM_WeightedStrategy strategy = new WSM_WeightedStrategy();
+
+        WSM_MemberState first = strategy.selectNext(new List<WSM_MemberState>{ tooLow, tooHigh });
+        System.assertEquals(tooLow.record.Id, first.record.Id,
+            'Equal rotation values tie, so Sort Order decides the first pick, not weight.');
+        System.assertEquals(1000, tooLow.rotationValue,
+            'A weight of 0 must be clamped up to 1, giving the full 1000 stride rather than a division by zero.');
+
+        WSM_MemberState second = strategy.selectNext(new List<WSM_MemberState>{ tooLow, tooHigh });
+        System.assertEquals(tooHigh.record.Id, second.record.Id,
+            'After the first seat is pushed to 1000, the seat still at 0 must be next.');
+        System.assertEquals(10, tooHigh.rotationValue,
+            'A weight of 500 must be clamped down to 100, giving a stride of 1000/100 = 10, not 1000/500 = 2.');
+    }
+
+    @isTest
+    static void weighted_nullWeightBehavesAsOne() {
+        WSM_MemberState noWeight = memberState(null, 0, null, 0);
+
+        new WSM_WeightedStrategy().selectNext(new List<WSM_MemberState>{ noWeight });
+
+        System.assertEquals(1000, noWeight.rotationValue, 'A blank weight must behave as weight 1, giving the full stride.');
+    }
+
+    @isTest
+    static void weighted_allNullRotationValuesStartFromZero() {
+        // Nobody has a rotation value yet, so the pool minimum has to fall back to 0
+        // rather than staying null and breaking the joiner arithmetic.
+        WSM_MemberState a = memberState(1, null, null, 0);
+        WSM_MemberState b = memberState(1, null, null, 1);
+
+        WSM_MemberState winner = new WSM_WeightedStrategy().selectNext(new List<WSM_MemberState>{ a, b });
+
+        System.assertEquals(a.record.Id, winner.record.Id, 'With every seat brand new, Sort Order decides.');
+        System.assertEquals(999.999999, winner.rotationValue,
+            'A seat with no rotation value is treated as one EPSILON below the pool minimum so a joiner '
+            + 'always wins its first eligible round outright instead of tying. With a pool minimum of 0 that '
+            + 'makes the first stride land at 1000 - 0.000001, not a flat 1000.');
+    }
+
+    @isTest
+    static void weighted_emptyPoolReturnsNull() {
+        System.assertEquals(null, new WSM_WeightedStrategy().selectNext(new List<WSM_MemberState>()),
+            'An empty eligible pool must return null rather than throwing.');
+        System.assertEquals(0, new WSM_WeightedStrategy().sortMembers(new List<WSM_MemberState>()).size(),
+            'Ranking an empty pool must return an empty list.');
+    }
 }

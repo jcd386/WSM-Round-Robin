@@ -69,6 +69,7 @@ public with sharing class WSM_RR_AdminController {
         @AuraEnabled public Integer totalAssignments;
         @AuraEnabled public Integer sortOrder;
         @AuraEnabled public Boolean isManager;
+        @AuraEnabled public Integer tier;
     }
 
     public class LogEntry {
@@ -103,6 +104,10 @@ public with sharing class WSM_RR_AdminController {
         @AuraEnabled public Boolean committed;
         @AuraEnabled public Id logId;
         @AuraEnabled public List<Verdict> verdicts;
+        /** Configuration problems the admin should fix, e.g. a capacity query that will not compile. */
+        @AuraEnabled public List<String> warnings;
+        /** Which tier the pick came from, so the simulator can say "filled from the bench". */
+        @AuraEnabled public Integer assignedFromTier;
     }
 
     public class Verdict {
@@ -110,6 +115,66 @@ public with sharing class WSM_RR_AdminController {
         @AuraEnabled public String userName;
         @AuraEnabled public Boolean eligible;
         @AuraEnabled public String skipReason;
+        @AuraEnabled public Integer tier;
+        @AuraEnabled public Boolean tierReached;
+        @AuraEnabled public Decimal externalLoad;
+        @AuraEnabled public List<CapacityReadingRow> capacity;
+    }
+
+    /** One Capacity Query's current reading for one member, as shown in the simulator. */
+    public class CapacityReadingRow {
+        @AuraEnabled public Id capacityQueryId;
+        @AuraEnabled public String label;
+        @AuraEnabled public Integer count;
+        @AuraEnabled public Integer cap;
+        @AuraEnabled public Boolean isCap;
+        @AuraEnabled public Boolean isLoadMetric;
+        @AuraEnabled public Boolean atCap;
+        @AuraEnabled public String unavailableReason;
+    }
+
+    /** A Capacity Query and its filters, for the admin editor. */
+    public class CapacityQueryRow {
+        @AuraEnabled public Id id;
+        @AuraEnabled public String name;
+        @AuraEnabled public String label;
+        @AuraEnabled public String objectName;
+        @AuraEnabled public String ownerField;
+        @AuraEnabled public String role;
+        @AuraEnabled public Integer cap;
+        @AuraEnabled public Decimal loadWeight;
+        @AuraEnabled public String filterLogic;
+        @AuraEnabled public Boolean active;
+        @AuraEnabled public Integer sortOrder;
+        @AuraEnabled public String description;
+        @AuraEnabled public List<CapacityFilterRow> filters;
+        /** Compiler verdict, so the editor can show a problem before anything is routed. */
+        @AuraEnabled public Boolean valid;
+        @AuraEnabled public String invalidReason;
+    }
+
+    public class CapacityFilterRow {
+        @AuraEnabled public Id id;
+        @AuraEnabled public Integer filterNumber;
+        @AuraEnabled public String fieldName;
+        @AuraEnabled public String operator;
+        @AuraEnabled public String valueSource;
+        @AuraEnabled public String value;
+        @AuraEnabled public String routedRecordField;
+    }
+
+    public class ObjectOption {
+        @AuraEnabled public String apiName;
+        @AuraEnabled public String label;
+    }
+
+    public class FieldOption {
+        @AuraEnabled public String apiName;
+        @AuraEnabled public String label;
+        @AuraEnabled public String fieldType;
+        @AuraEnabled public Boolean groupable;
+        /** Picklist values, so the editor can offer them instead of free text. */
+        @AuraEnabled public List<String> picklistValues;
     }
 
     // Shape of the JSON payload accepted by saveGroup(). Not @AuraEnabled — this
@@ -222,10 +287,10 @@ public with sharing class WSM_RR_AdminController {
                 SELECT Id, WSM_User__c, WSM_User__r.Name, WSM_Active__c, WSM_Weight__c,
                        WSM_Cap_Override__c, WSM_OOO_Start_Date__c, WSM_OOO_Return_Date__c,
                        WSM_Last_Assigned__c, WSM_Total_Assignments__c, WSM_Sort_Order__c,
-                       WSM_Is_Manager__c
+                       WSM_Is_Manager__c, WSM_Tier__c
                 FROM WSM_Round_Robin_Member__c
                 WHERE WSM_Group__c = :groupId
-                ORDER BY WSM_Sort_Order__c ASC NULLS LAST, Id ASC
+                ORDER BY WSM_Tier__c ASC NULLS FIRST, WSM_Sort_Order__c ASC NULLS LAST, Id ASC
             ]) {
                 MemberRow row = new MemberRow();
                 row.memberId = m.Id;
@@ -242,6 +307,7 @@ public with sharing class WSM_RR_AdminController {
                 row.totalAssignments = m.WSM_Total_Assignments__c != null ? m.WSM_Total_Assignments__c.intValue() : 0;
                 row.sortOrder = m.WSM_Sort_Order__c != null ? m.WSM_Sort_Order__c.intValue() : null;
                 row.isManager = m.WSM_Is_Manager__c;
+                row.tier = m.WSM_Tier__c != null ? m.WSM_Tier__c.intValue() : 1;
                 memberRows.add(row);
             }
 
@@ -528,6 +594,10 @@ public with sharing class WSM_RR_AdminController {
                     m.WSM_Is_Manager__c = (Boolean) entry.get('isManager');
                     touched = true;
                 }
+                if (entry.containsKey('tier')) {
+                    m.WSM_Tier__c = toDecimal(entry.get('tier'));
+                    touched = true;
+                }
 
                 if (touched) {
                     toUpdate.add(m);
@@ -630,6 +700,8 @@ public with sharing class WSM_RR_AdminController {
             SimulationResult result = new SimulationResult();
             result.verdicts = buildVerdicts(preview);
             result.committed = doCommit;
+            result.warnings = preview.warnings == null ? new List<String>() : preview.warnings;
+            result.assignedFromTier = preview.assignedFromTier;
 
             if (doCommit) {
                 WSM_RRResult assignResult = WSM_RoundRobinService.assign(groupId);
@@ -666,6 +738,24 @@ public with sharing class WSM_RR_AdminController {
             v.userName = state.userName;
             v.eligible = state.eligible;
             v.skipReason = state.skipReason;
+            v.tier = state.tier;
+            v.tierReached = state.tierReached;
+            v.externalLoad = state.externalLoad;
+            v.capacity = new List<CapacityReadingRow>();
+            if (state.capacity != null) {
+                for (WSM_RRPreview.CapacityReading reading : state.capacity) {
+                    CapacityReadingRow row = new CapacityReadingRow();
+                    row.capacityQueryId = reading.capacityQueryId;
+                    row.label = reading.label;
+                    row.count = reading.count;
+                    row.cap = reading.cap;
+                    row.isCap = reading.isCap;
+                    row.isLoadMetric = reading.isLoadMetric;
+                    row.atCap = reading.atCap;
+                    row.unavailableReason = reading.unavailableReason;
+                    v.capacity.add(row);
+                }
+            }
             verdicts.add(v);
         }
         return verdicts;
@@ -677,6 +767,298 @@ public with sharing class WSM_RR_AdminController {
         }
         List<User> users = [SELECT Name FROM User WHERE Id = :userId LIMIT 1];
         return users.isEmpty() ? null : users[0].Name;
+    }
+
+    // ------------------------------------------------------------------
+    // Capacity Queries
+    // ------------------------------------------------------------------
+
+    /**
+     * Every capacity query on the group, active or not, each carrying the compiler's
+     * verdict so the editor can show a problem before anything gets routed with it.
+     */
+    @AuraEnabled
+    public static List<CapacityQueryRow> getCapacityQueries(Id groupId) {
+        try {
+            List<CapacityQueryRow> rows = new List<CapacityQueryRow>();
+            for (WSM_Capacity_Query__c config : [
+                SELECT Id, Name, WSM_Label__c, WSM_Object__c, WSM_Owner_Field__c, WSM_Role__c,
+                       WSM_Cap__c, WSM_Load_Weight__c, WSM_Filter_Logic__c, WSM_Active__c,
+                       WSM_Sort_Order__c, WSM_Description__c,
+                       (SELECT Id, WSM_Filter_Number__c, WSM_Field__c, WSM_Operator__c,
+                               WSM_Value_Source__c, WSM_Value__c, WSM_Routed_Record_Field__c
+                        FROM Filters__r ORDER BY WSM_Filter_Number__c)
+                FROM WSM_Capacity_Query__c
+                WHERE WSM_Group__c = :groupId
+                ORDER BY WSM_Sort_Order__c ASC NULLS LAST, Id ASC
+            ]) {
+                rows.add(toCapacityQueryRow(config));
+            }
+            return rows;
+        } catch (Exception e) {
+            throw friendlyError(e.getMessage());
+        }
+    }
+
+    private static CapacityQueryRow toCapacityQueryRow(WSM_Capacity_Query__c config) {
+        CapacityQueryRow row = new CapacityQueryRow();
+        row.id = config.Id;
+        row.name = config.Name;
+        row.label = config.WSM_Label__c;
+        row.objectName = config.WSM_Object__c;
+        row.ownerField = config.WSM_Owner_Field__c;
+        row.role = config.WSM_Role__c;
+        row.cap = config.WSM_Cap__c != null ? config.WSM_Cap__c.intValue() : null;
+        row.loadWeight = config.WSM_Load_Weight__c;
+        row.filterLogic = config.WSM_Filter_Logic__c;
+        row.active = config.WSM_Active__c;
+        row.sortOrder = config.WSM_Sort_Order__c != null ? config.WSM_Sort_Order__c.intValue() : null;
+        row.description = config.WSM_Description__c;
+        row.filters = new List<CapacityFilterRow>();
+        for (WSM_Capacity_Filter__c filter : config.Filters__r) {
+            CapacityFilterRow f = new CapacityFilterRow();
+            f.id = filter.Id;
+            f.filterNumber = filter.WSM_Filter_Number__c != null ? filter.WSM_Filter_Number__c.intValue() : null;
+            f.fieldName = filter.WSM_Field__c;
+            f.operator = filter.WSM_Operator__c;
+            f.valueSource = filter.WSM_Value_Source__c;
+            f.value = filter.WSM_Value__c;
+            f.routedRecordField = filter.WSM_Routed_Record_Field__c;
+            row.filters.add(f);
+        }
+        WSM_CapacityQueryDef def = WSM_CapacityQueryBuilder.compile(config, config.Filters__r);
+        row.valid = def.isValid;
+        row.invalidReason = def.invalidReason;
+        return row;
+    }
+
+    /**
+     * Compiles a capacity query without saving it, so the editor can tell the admin
+     * whether it will work while they are still typing. Same compiler the engine uses,
+     * so a pass here means a pass at runtime.
+     */
+    @AuraEnabled
+    public static CapacityQueryRow validateCapacityQuery(String capacityJson) {
+        try {
+            CapacityInput input = (CapacityInput) JSON.deserialize(capacityJson, CapacityInput.class);
+            WSM_Capacity_Query__c config = new WSM_Capacity_Query__c(
+                WSM_Label__c = input.label,
+                WSM_Object__c = input.objectName,
+                WSM_Owner_Field__c = input.ownerField,
+                WSM_Role__c = input.role,
+                WSM_Cap__c = input.cap,
+                WSM_Load_Weight__c = input.loadWeight,
+                WSM_Filter_Logic__c = input.filterLogic,
+                WSM_Active__c = input.active == null ? true : input.active
+            );
+            List<WSM_Capacity_Filter__c> filters = buildFilterRecords(input, null);
+
+            WSM_CapacityQueryDef def = WSM_CapacityQueryBuilder.compile(config, filters);
+            CapacityQueryRow row = new CapacityQueryRow();
+            row.label = input.label;
+            row.objectName = input.objectName;
+            row.valid = def.isValid;
+            row.invalidReason = def.invalidReason;
+            return row;
+        } catch (Exception e) {
+            throw friendlyError(e.getMessage());
+        }
+    }
+
+    /**
+     * Upserts a capacity query and replaces its filters wholesale. Replacing rather than
+     * diffing keeps Filter Numbers and Filter Logic consistent: a partial update could
+     * leave logic pointing at a filter that no longer exists.
+     */
+    @AuraEnabled
+    public static Id saveCapacityQuery(String capacityJson) {
+        try {
+            CapacityInput input = (CapacityInput) JSON.deserialize(capacityJson, CapacityInput.class);
+            if (input.groupId == null) {
+                throw friendlyError('A capacity query needs a group.');
+            }
+            if (String.isBlank(input.label)) {
+                throw friendlyError('Give the count a short label. It shows up in skip reasons.');
+            }
+
+            WSM_Capacity_Query__c config = new WSM_Capacity_Query__c();
+            if (input.id != null) {
+                config.Id = input.id;
+            } else {
+                // Master-detail on this object is deliberately not reparentable, so the
+                // group can only be written on insert. Setting it on an update throws
+                // "Field is not writeable" even when the value has not changed.
+                config.WSM_Group__c = input.groupId;
+            }
+            config.WSM_Label__c = input.label;
+            config.WSM_Object__c = input.objectName;
+            config.WSM_Owner_Field__c = input.ownerField;
+            config.WSM_Role__c = String.isBlank(input.role) ? WSM_CapacityQueryDef.ROLE_CAP : input.role;
+            config.WSM_Cap__c = input.cap;
+            config.WSM_Load_Weight__c = input.loadWeight;
+            config.WSM_Filter_Logic__c = input.filterLogic;
+            config.WSM_Active__c = input.active == null ? true : input.active;
+            config.WSM_Sort_Order__c = input.sortOrder;
+            config.WSM_Description__c = input.description;
+            upsert config;
+
+            delete [SELECT Id FROM WSM_Capacity_Filter__c WHERE WSM_Capacity_Query__c = :config.Id];
+            List<WSM_Capacity_Filter__c> filters = buildFilterRecords(input, config.Id);
+            if (!filters.isEmpty()) {
+                insert filters;
+            }
+            return config.Id;
+        } catch (AuraHandledException ahe) {
+            throw ahe;
+        } catch (Exception e) {
+            throw friendlyError(e.getMessage());
+        }
+    }
+
+    private static List<WSM_Capacity_Filter__c> buildFilterRecords(CapacityInput input, Id capacityQueryId) {
+        List<WSM_Capacity_Filter__c> filters = new List<WSM_Capacity_Filter__c>();
+        if (input.filters == null) {
+            return filters;
+        }
+        Integer autoNumber = 0;
+        for (CapacityFilterInput f : input.filters) {
+            autoNumber++;
+            WSM_Capacity_Filter__c filter = new WSM_Capacity_Filter__c();
+            if (capacityQueryId != null) {
+                filter.WSM_Capacity_Query__c = capacityQueryId;
+            }
+            // Fall back to position so an editor that never set the number still produces
+            // filters that Filter Logic can refer to.
+            filter.WSM_Filter_Number__c = f.filterNumber == null ? autoNumber : f.filterNumber;
+            filter.WSM_Field__c = f.fieldName;
+            filter.WSM_Operator__c = f.operator;
+            filter.WSM_Value_Source__c = String.isBlank(f.valueSource)
+                ? WSM_CapacityQueryBuilder.SRC_LITERAL : f.valueSource;
+            filter.WSM_Value__c = f.value;
+            filter.WSM_Routed_Record_Field__c = f.routedRecordField;
+            filters.add(filter);
+        }
+        return filters;
+    }
+
+    @AuraEnabled
+    public static void deleteCapacityQuery(Id capacityQueryId) {
+        try {
+            delete new WSM_Capacity_Query__c(Id = capacityQueryId);
+        } catch (Exception e) {
+            throw friendlyError(e.getMessage());
+        }
+    }
+
+    /**
+     * Queryable objects the admin can count, so the editor offers a picker instead of
+     * asking anyone to type an API name. Custom objects and the common standard ones only:
+     * the full global describe runs to thousands of entries in a mature org and is
+     * unusable as a dropdown.
+     */
+    @AuraEnabled(cacheable=true)
+    public static List<ObjectOption> describeCountableObjects() {
+        List<ObjectOption> options = new List<ObjectOption>();
+        Set<String> alwaysInclude = new Set<String>{
+            'account', 'contact', 'lead', 'opportunity', 'case', 'task', 'event',
+            'campaign', 'contract', 'order', 'quote', 'asset', 'product2'
+        };
+        for (SObjectType objectType : Schema.getGlobalDescribe().values()) {
+            DescribeSObjectResult d = objectType.getDescribe();
+            String apiName = d.getName();
+            Boolean isCustom = apiName.endsWithIgnoreCase('__c');
+            if (!d.isQueryable() || d.isDeprecatedAndHidden()) {
+                continue;
+            }
+            if (!isCustom && !alwaysInclude.contains(apiName.toLowerCase())) {
+                continue;
+            }
+            ObjectOption option = new ObjectOption();
+            option.apiName = apiName;
+            option.label = d.getLabel();
+            options.add(option);
+        }
+        options.sort(new ObjectOptionComparator());
+        return options;
+    }
+
+    private class ObjectOptionComparator implements Comparator<ObjectOption> {
+        public Integer compare(ObjectOption a, ObjectOption b) {
+            Integer byLabel = a.label.compareTo(b.label);
+            return byLabel != 0 ? byLabel : a.apiName.compareTo(b.apiName);
+        }
+    }
+
+    /**
+     * Filterable fields on one object, with their types, groupability and picklist values,
+     * so the editor can offer the right operators and a value picker rather than free text.
+     */
+    @AuraEnabled(cacheable=true)
+    public static List<FieldOption> describeFilterableFields(String objectName) {
+        List<FieldOption> options = new List<FieldOption>();
+        if (String.isBlank(objectName)) {
+            return options;
+        }
+        SObjectType objectType = Schema.getGlobalDescribe().get(objectName.trim().toLowerCase());
+        if (objectType == null) {
+            throw friendlyError('There is no object called \'' + objectName + '\' in this org.');
+        }
+        for (SObjectField field : objectType.getDescribe().fields.getMap().values()) {
+            DescribeFieldResult d = field.getDescribe();
+            if (!d.isFilterable()) {
+                continue;
+            }
+            FieldOption option = new FieldOption();
+            option.apiName = d.getName();
+            option.label = d.getLabel();
+            option.fieldType = d.getType().name();
+            option.groupable = d.isGroupable();
+            option.picklistValues = new List<String>();
+            if (d.getType() == DisplayType.PICKLIST || d.getType() == DisplayType.MULTIPICKLIST) {
+                for (PicklistEntry entry : d.getPicklistValues()) {
+                    if (entry.isActive()) {
+                        option.picklistValues.add(entry.getValue());
+                    }
+                }
+            }
+            options.add(option);
+        }
+        options.sort(new FieldOptionComparator());
+        return options;
+    }
+
+    private class FieldOptionComparator implements Comparator<FieldOption> {
+        public Integer compare(FieldOption a, FieldOption b) {
+            Integer byLabel = a.label.compareTo(b.label);
+            return byLabel != 0 ? byLabel : a.apiName.compareTo(b.apiName);
+        }
+    }
+
+    // Shapes of the JSON the capacity editor posts. Not @AuraEnabled: built only by
+    // JSON.deserialize() from the LWC request body, never returned to the client.
+    private class CapacityInput {
+        public Id id;
+        public Id groupId;
+        public String label;
+        public String objectName;
+        public String ownerField;
+        public String role;
+        public Integer cap;
+        public Decimal loadWeight;
+        public String filterLogic;
+        public Boolean active;
+        public Integer sortOrder;
+        public String description;
+        public List<CapacityFilterInput> filters;
+    }
+
+    private class CapacityFilterInput {
+        public Integer filterNumber;
+        public String fieldName;
+        public String operator;
+        public String valueSource;
+        public String value;
+        public String routedRecordField;
     }
 
     // ------------------------------------------------------------------

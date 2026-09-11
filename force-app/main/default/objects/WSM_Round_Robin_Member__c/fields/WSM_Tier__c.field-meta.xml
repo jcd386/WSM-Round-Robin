@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Tier__c</fullName>
+    <defaultValue>1</defaultValue>
+    <description>Pool tier. The engine fills tier 1 first and only looks at tier 2 if no tier 1 member is eligible, then tier 3, and so on. Use this for an overflow bench: primary people on tier 1, backup people on tier 2. Every gate still applies inside a tier, so an overflow member at cap or out of office is still skipped. Blank counts as tier 1.</description>
+    <inlineHelpText>1 is the primary pool. Higher tiers are only used when every lower tier is unavailable.</inlineHelpText>
+    <label>Tier</label>
+    <precision>2</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+</CustomField>

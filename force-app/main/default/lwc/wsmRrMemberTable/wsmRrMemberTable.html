@@ -22,6 +22,9 @@
                         <th class="mt__col-narrow">Active
                             <lightning-helptext class="mt__th-help" content="On means this person gets assignments. Off means they're skipped, but they keep their spot in the group."></lightning-helptext>
                         </th>
+                        <th class="mt__col-narrow">Tier
+                            <lightning-helptext class="mt__th-help" content="Tier 1 is the primary pool and gets assignments first. Higher tiers are only used when every lower tier is unavailable, like a bench."></lightning-helptext>
+                        </th>
                         <template lwc:if={showWeight}>
                             <th class="mt__col-narrow">Weight
                                 <lightning-helptext class="mt__th-help" content="Bigger number = more turns. Someone with weight 3 gets three assignments for every one that a weight-1 person gets."></lightning-helptext>
@@ -48,6 +51,11 @@
                 </thead>
                 <tbody>
                     <template for:each={rows} for:item="row">
+                        <template lwc:if={row.showTierDivider}>
+                            <tr key={row.tierDividerKey} class="mt__tierdivider">
+                                <td colspan="12">{row.tierDividerLabel}</td>
+                            </tr>
+                        </template>
                         <tr key={row.memberId} class={row.rowClass}>
                             <td>
                                 <span class="slds-truncate" title={row.userName}>{row.userName}</span>
@@ -66,6 +74,16 @@
                                     data-id={row.memberId}
                                     onchange={handleActiveToggle}
                                 ></lightning-input>
+                            </td>
+                            <td>
+                                <input
+                                    type="number"
+                                    class="mt__mininput"
+                                    min="1"
+                                    value={row.tier}
+                                    data-id={row.memberId}
+                                    onchange={handleTierChange}
+                                />
                             </td>
                             <template lwc:if={showWeight}>
                                 <td>

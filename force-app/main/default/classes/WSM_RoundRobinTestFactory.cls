@@ -84,4 +84,47 @@ public class WSM_RoundRobinTestFactory {
     public static User insertRestrictedUser() {
         return insertUsers(1)[0];
     }
+
+    // ---------------------------------------------------------------- capacity queries
+
+    public static WSM_Capacity_Query__c makeCapacityQuery(Id groupId, String label, String objectName,
+            String role, Integer cap) {
+        return new WSM_Capacity_Query__c(
+            WSM_Group__c = groupId,
+            WSM_Label__c = label,
+            WSM_Object__c = objectName,
+            WSM_Role__c = role,
+            WSM_Cap__c = cap,
+            WSM_Active__c = true,
+            WSM_Sort_Order__c = 0
+        );
+    }
+
+    public static WSM_Capacity_Filter__c makeFilter(Id capacityQueryId, Integer filterNumber, String fieldName,
+            String operator, String valueSource, String value) {
+        return new WSM_Capacity_Filter__c(
+            WSM_Capacity_Query__c = capacityQueryId,
+            WSM_Filter_Number__c = filterNumber,
+            WSM_Field__c = fieldName,
+            WSM_Operator__c = operator,
+            WSM_Value_Source__c = valueSource,
+            WSM_Value__c = value
+        );
+    }
+
+    /** Inserts a capacity query plus one simple equals filter and returns the parent. */
+    public static WSM_Capacity_Query__c insertCapacityQuery(Id groupId, String label, String objectName,
+            String role, Integer cap, String ownerField, String fieldName, String operator, String value) {
+        WSM_Capacity_Query__c config = makeCapacityQuery(groupId, label, objectName, role, cap);
+        config.WSM_Owner_Field__c = ownerField;
+        insert config;
+        insert makeFilter(config.Id, 1, fieldName, operator, WSM_CapacityQueryBuilder.SRC_LITERAL, value);
+        return config;
+    }
+
+    /** Synthetic unsaved Id for a capacity query, for the in-memory compiler tests. */
+    public static Id fakeCapacityQueryId(Integer seq) {
+        return WSM_Capacity_Query__c.SObjectType.getDescribe().getKeyPrefix()
+            + String.valueOf(seq).leftPad(12, '0');
+    }
 }

@@ -7,6 +7,33 @@
     margin-top: 2px;
 }
 
+.sim__warnings {
+    margin-bottom: 12px;
+}
+
+.sim__warningline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fef2cd;
+    color: #573a06;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin: 0 0 6px;
+    font-size: 0.8125rem;
+}
+
+.sim__warningicon {
+    flex: 0 0 auto;
+}
+
+.sim__filledtier {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #444;
+    margin: 4px 0 0;
+}
+
 .sim__controls {
     display: flex;
     align-items: center;
@@ -80,6 +107,50 @@
 .sim__col-elig {
     width: 70px;
     text-align: center;
+}
+
+.sim__col-tier {
+    width: 50px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.sim__col-load {
+    width: 70px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.sim__col-capacity {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.sim__row_notneeded {
+    opacity: 0.55;
+}
+
+.sim__capchip {
+    display: inline-block;
+    font-size: 0.6875rem;
+    border-radius: 9px;
+    padding: 2px 8px;
+    background: var(--slds-g-color-neutral-base-95, #f3f3f3);
+    color: #444;
+    white-space: nowrap;
+}
+
+.sim__capchip_atcap {
+    background: #fde2e2;
+    color: #ba0517;
+    font-weight: 700;
+}
+
+.sim__capchip_unavailable {
+    background: #fef2cd;
+    color: #573a06;
+    font-style: italic;
 }
 
 .sim__empty {

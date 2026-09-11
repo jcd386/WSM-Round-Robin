@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Active__c</fullName>
+    <defaultValue>true</defaultValue>
+    <description>Uncheck to stop this capacity query being evaluated without deleting it and losing its filters. Inactive rows cost no query.</description>
+    <inlineHelpText>Uncheck to turn this count off without deleting it.</inlineHelpText>
+    <label>Active</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

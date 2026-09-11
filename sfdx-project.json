@@ -8,9 +8,9 @@
       "path": "force-app",
       "default": true,
       "package": "WSM Round Robin",
-      "versionName": "v2.1",
-      "versionNumber": "2.1.0.NEXT",
-      "versionDescription": "Queue fallback support (Owner Id output), plain-language help bubbles throughout, member table UX rework, fallback display fix, labeled-outcome example flow.",
+      "versionName": "v2.2",
+      "versionNumber": "2.2.0.NEXT",
+      "versionDescription": "Capacity Queries: admin-defined counts of your own records used as hard caps and/or load metrics, built from dropdowns with live validation. New Least Loaded algorithm ranks on that load divided by member weight, so a weight gives a proportional share. Member Tiers add a primary pool plus an overflow bench that still respects every gate. Simulator shows live capacity readings, load scores, tiers and config warnings.",
       "unpackagedMetadata": {
         "path": "unpackaged"
       }
