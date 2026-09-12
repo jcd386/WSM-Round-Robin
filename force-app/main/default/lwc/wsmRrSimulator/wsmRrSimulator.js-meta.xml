@@ -3,5 +3,5 @@
     <apiVersion>64.0</apiVersion>
     <isExposed>false</isExposed>
     <masterLabel>WSM Round Robin Simulator</masterLabel>
-    <description>Dry-run modal — "Would assign" preview with per-member verdicts and optional commit.</description>
+    <description>Dry-run modal: "Would assign" preview with per-member verdicts and optional commit.</description>
 </LightningComponentBundle>

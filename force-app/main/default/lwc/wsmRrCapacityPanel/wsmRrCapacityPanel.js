@@ -659,6 +659,10 @@ export default class WsmRrCapacityPanel extends LightningElement {
             summaryLine: summaryParts.join(' · '),
             expanded: !q.collapsed,
             toggleIcon: q.collapsed ? 'utility:chevronright' : 'utility:chevrondown',
+            // aria-expanded needs the string form, and the title gives the button
+            // an accessible name beyond the label text it already wraps.
+            expandedAttr: q.collapsed ? 'false' : 'true',
+            toggleTitle: q.collapsed ? 'Expand this count' : 'Collapse this count',
             cardClass: 'cq__card' + (q.collapsed ? '' : ' cq__card_open'),
             statusPill: this.pillViewModel(q),
             filters: q.filters.map((f) => this.buildFilterViewModel(q, f, fieldOptions)),

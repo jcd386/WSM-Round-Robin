@@ -39,7 +39,7 @@
                             <lightning-helptext class="mt__th-help" content="How many assignments this person has received so far this period."></lightning-helptext>
                         </th>
                         <th class="mt__col-ooo">Out of office
-                            <lightning-helptext class="mt__th-help" content="Away dates. The person is skipped starting on the first day and starts getting work again on the return day — with no pile-up waiting for them."></lightning-helptext>
+                            <lightning-helptext class="mt__th-help" content="Away dates. The person is skipped starting on the first day and starts getting work again on the return day, with no pile-up waiting for them."></lightning-helptext>
                         </th>
                         <template lwc:if={showOrder}>
                             <th class="mt__col-order">Order
@@ -159,7 +159,7 @@
             </table>
         </template>
         <template lwc:if={isEmpty}>
-            <div class="mt__empty slds-text-color_weak">No members yet — add someone above to get started.</div>
+            <div class="mt__empty slds-text-color_weak">No members yet. Add someone above to get started.</div>
         </template>
     </div>
 

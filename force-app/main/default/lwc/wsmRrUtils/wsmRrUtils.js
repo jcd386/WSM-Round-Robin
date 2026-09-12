@@ -1,5 +1,5 @@
 /**
- * WSM Round Robin — shared JS-only service module.
+ * WSM Round Robin shared JS-only service module.
  * No template, no meta target: never used as a custom element, only imported
  * for its named exports (import { reduceErrors } from 'c/wsmRrUtils').
  */
@@ -49,7 +49,7 @@ export function reduceErrorMessage(error) {
     return reduceErrors(error).join(', ') || 'Unknown error';
 }
 
-/** Standard debounce — used for typeahead search fields. */
+/** Standard debounce, used for typeahead search fields. */
 export function debounce(fn, wait = 300) {
     let timeoutId;
     return (...args) => {
@@ -61,12 +61,12 @@ export function debounce(fn, wait = 300) {
 /** Coarse relative-time formatter ("just now", "5m ago", "3d ago"). */
 export function timeAgo(value) {
     if (!value) {
-        return '—';
+        return '-';
     }
     const then = value instanceof Date ? value : new Date(value);
     const diffMs = Date.now() - then.getTime();
     if (Number.isNaN(diffMs)) {
-        return '—';
+        return '-';
     }
     const diffSec = Math.round(diffMs / 1000);
     if (diffSec < 5) {
@@ -119,8 +119,10 @@ export function algorithmAbbrev(algorithm) {
             return 'W';
         case 'Least Assigned':
             return 'LA';
+        case 'Least Loaded':
+            return 'LL';
         default:
-            return '—';
+            return '';
     }
 }
 

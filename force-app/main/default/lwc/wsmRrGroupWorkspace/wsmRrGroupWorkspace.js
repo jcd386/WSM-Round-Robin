@@ -87,15 +87,15 @@ export default class WsmRrGroupWorkspace extends LightningElement {
     }
 
     get membersCheck() {
-        return this.members && this.members.length ? '✓' : '—';
+        return this.members && this.members.length ? '✓' : '-';
     }
 
     get activeCheck() {
-        return this.grp && this.grp.active ? '✓' : '—';
+        return this.grp && this.grp.active ? '✓' : '-';
     }
 
     get wiredCheck() {
-        return this.hasAnyLog ? '✓' : '—';
+        return this.hasAnyLog ? '✓' : '-';
     }
 
     get membersChipClass() {

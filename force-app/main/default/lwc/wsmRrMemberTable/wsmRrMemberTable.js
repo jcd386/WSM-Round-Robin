@@ -8,7 +8,7 @@ import { reduceErrorMessage } from 'c/wsmRrUtils';
 
 /**
  * Members tab: inline multi-add row + dense hand-rolled table.
- * Every mutation (toggle, weight, cap, OOO, order, remove) saves immediately —
+ * Every mutation (toggle, weight, cap, OOO, order, remove) saves immediately,
  * this table never holds unsaved JS-pushed rows (see lwc-best-practices.md).
  */
 export default class WsmRrMemberTable extends LightningElement {
@@ -111,17 +111,17 @@ export default class WsmRrMemberTable extends LightningElement {
             return 'Set OOO';
         }
         if (m.oooStart && m.oooReturn) {
-            return `${this.shortDate(m.oooStart)} – ${this.shortDate(m.oooReturn)}`;
+            return `${this.shortDate(m.oooStart)} to ${this.shortDate(m.oooReturn)}`;
         }
         return m.oooStart ? `From ${this.shortDate(m.oooStart)}` : `Until ${this.shortDate(m.oooReturn)}`;
     }
 
     formatOooTitle(m) {
         if (!m.oooStart && !m.oooReturn) {
-            return 'Set an out-of-office range — the member is skipped while away';
+            return 'Set an out-of-office range. The member is skipped while away';
         }
         const ret = m.oooReturn ? `eligible again ${this.shortDate(m.oooReturn)}` : 'no return date set';
-        return `Out of office — ${ret}. Click to edit.`;
+        return `Out of office until ${ret}. Click to edit.`;
     }
 
     // Parse 'YYYY-MM-DD' as local date parts; new Date(str) would shift a day in negative-UTC timezones.

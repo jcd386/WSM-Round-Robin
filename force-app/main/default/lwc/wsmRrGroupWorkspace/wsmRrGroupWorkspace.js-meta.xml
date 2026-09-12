@@ -3,7 +3,7 @@
     <apiVersion>64.0</apiVersion>
     <isExposed>true</isExposed>
     <masterLabel>WSM Round Robin Group Workspace</masterLabel>
-    <description>Group detail workspace — header actions + Members/Settings/Activity/Wiring tabs. Used inside the Round Robin Manager and on the Group record page.</description>
+    <description>Group detail workspace: header actions + Members/Settings/Activity/Wiring tabs. Used inside the Round Robin Manager and on the Group record page.</description>
     <targets>
         <target>lightning__RecordPage</target>
         <target>lightning__AppPage</target>

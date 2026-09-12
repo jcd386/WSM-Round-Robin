@@ -35,12 +35,19 @@
             <ul class="cq__list">
                 <template for:each={rows} for:item="row">
                     <li key={row.key} class={row.cardClass}>
-                        <div class="cq__cardhead" data-row={row.clientId} onclick={toggleCollapse}>
+                        <button
+                            type="button"
+                            class="cq__cardhead"
+                            data-row={row.clientId}
+                            aria-expanded={row.expandedAttr}
+                            title={row.toggleTitle}
+                            onclick={toggleCollapse}
+                        >
                             <lightning-icon icon-name={row.toggleIcon} size="x-small" class="cq__toggleicon"></lightning-icon>
                             <span class="cq__cardlabel slds-truncate" title={row.label}>{row.label}</span>
                             <span class="cq__cardsummary slds-truncate">{row.summaryLine}</span>
                             <span class={row.statusPill.cls}>{row.statusPill.text}</span>
-                        </div>
+                        </button>
 
                         <template lwc:if={row.expanded}>
                             <div class="cq__cardbody">

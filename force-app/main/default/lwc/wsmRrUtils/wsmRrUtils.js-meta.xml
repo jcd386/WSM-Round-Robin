@@ -3,5 +3,5 @@
     <apiVersion>64.0</apiVersion>
     <isExposed>false</isExposed>
     <masterLabel>WSM Round Robin Utilities (Service)</masterLabel>
-    <description>JS-only shared helpers (error reduction, debounce, relative time, slug) — imported, never rendered.</description>
+    <description>JS-only shared helpers (error reduction, debounce, relative time, slug). Imported, never rendered.</description>
 </LightningComponentBundle>

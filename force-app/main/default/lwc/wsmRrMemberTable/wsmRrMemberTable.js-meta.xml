@@ -3,5 +3,5 @@
     <apiVersion>64.0</apiVersion>
     <isExposed>false</isExposed>
     <masterLabel>WSM Round Robin Member Table</masterLabel>
-    <description>Members tab — dense hand-rolled table, every edit saves immediately.</description>
+    <description>Members tab: dense hand-rolled table, every edit saves immediately.</description>
 </LightningComponentBundle>

@@ -97,13 +97,29 @@
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
 }
 
+/*
+ * A real button, not a clickable div, so the card can be reached and toggled by
+ * keyboard and announced with its expanded state. The resets below strip the
+ * native button chrome so it still reads as a card header.
+ */
 .cq__cardhead {
     display: flex;
     align-items: center;
     gap: 10px;
+    width: 100%;
     padding: 10px 12px;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    color: inherit;
+    text-align: left;
     cursor: pointer;
     transition: background 0.15s ease;
+}
+
+.cq__cardhead:focus-visible {
+    outline: 2px solid var(--slds-g-color-brand-base-50, #0176d3);
+    outline-offset: -2px;
 }
 
 .cq__cardhead:hover {
