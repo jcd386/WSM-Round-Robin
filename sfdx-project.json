@@ -10,7 +10,7 @@
       "package": "WSM Round Robin",
       "versionName": "v2.2",
       "versionNumber": "2.2.0.NEXT",
-      "versionDescription": "Capacity Queries: admin-defined counts of your own records used as hard caps and/or load metrics, built from dropdowns with live validation. New Least Loaded algorithm ranks on that load divided by member weight, so a weight gives a proportional share. Member Tiers add a primary pool plus an overflow bench that still respects every gate. Simulator shows live capacity readings, load scores, tiers and config warnings.",
+      "versionDescription": "Capacity Queries: admin-defined counts of your own records, built from dropdowns with live validation, used as hard caps and/or load metrics. Floor on a capacity query is a priority band, so whoever is under it is served first until they reach it, which is how you ramp a new joiner. New Least Loaded algorithm ranks on that load divided by member weight. Member Tiers give a primary pool plus an overflow bench that still respects every gate. Simulator shows live capacity readings, load scores, floor status, tiers and config warnings.",
       "unpackagedMetadata": {
         "path": "unpackaged"
       }
