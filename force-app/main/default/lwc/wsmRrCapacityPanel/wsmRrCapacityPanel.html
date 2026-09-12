@@ -106,6 +106,15 @@
                                                     field-level-help="The most this count can reach before members with it are blocked."
                                                 ></lightning-input>
                                             </template>
+                                            <lightning-input
+                                                type="number"
+                                                label="Floor"
+                                                min="0"
+                                                value={row.floor}
+                                                data-row={row.clientId}
+                                                onchange={handleFloorChange}
+                                                field-level-help="Optional. Anyone under this number is served first until they reach it, so you can ramp somebody up. It never blocks anyone, and it only applies within a tier."
+                                            ></lightning-input>
                                             <template lwc:if={row.showLoadWeight}>
                                                 <lightning-input
                                                     type="number"

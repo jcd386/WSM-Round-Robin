@@ -31,7 +31,7 @@ public inherited sharing virtual class WSM_RoundRobinSelector {
         ];
     }
 
-    /** Read-only group fetch for preview() — never locks, never blocks on a live assign(). */
+    /** Read-only group fetch for preview(): never locks, never blocks on a live assign(). */
     public virtual List<WSM_Round_Robin_Group__c> queryGroups(Set<Id> groupIds) {
         return [
             SELECT Id, Name, WSM_Active__c, WSM_Algorithm__c, WSM_Capacity_Mode__c, WSM_Period__c,
@@ -42,7 +42,7 @@ public inherited sharing virtual class WSM_RoundRobinSelector {
     }
 
     /**
-     * One query for every member across every requested group. No FOR UPDATE — the
+     * One query for every member across every requested group. No FOR UPDATE, because the
      * group lock already serializes engine writers, and the admin UI only ever touches
      * disjoint fields (weight, active, OOO) that don't race with an in-flight pick.
      */
@@ -59,7 +59,7 @@ public inherited sharing virtual class WSM_RoundRobinSelector {
 
     /**
      * Per-member assignment counts since periodStart, for every group in groupIds. Call
-     * once per distinct period-start value across the requested groups (at most 3 —
+     * once per distinct period-start value across the requested groups (at most 3,
      * Daily/Weekly/Monthly) rather than once per group.
      */
     public virtual AggregateResult[] periodCounts(Set<Id> groupIds, Datetime periodStart) {
@@ -90,7 +90,7 @@ public inherited sharing virtual class WSM_RoundRobinSelector {
     public virtual List<WSM_Capacity_Query__c> capacityQueriesForGroups(Set<Id> groupIds) {
         return [
             SELECT Id, Name, WSM_Group__c, WSM_Label__c, WSM_Object__c, WSM_Owner_Field__c,
-                   WSM_Role__c, WSM_Cap__c, WSM_Load_Weight__c, WSM_Filter_Logic__c,
+                   WSM_Role__c, WSM_Cap__c, WSM_Floor__c, WSM_Load_Weight__c, WSM_Filter_Logic__c,
                    WSM_Active__c, WSM_Sort_Order__c,
                    (SELECT Id, WSM_Filter_Number__c, WSM_Field__c, WSM_Operator__c,
                            WSM_Value_Source__c, WSM_Value__c, WSM_Routed_Record_Field__c

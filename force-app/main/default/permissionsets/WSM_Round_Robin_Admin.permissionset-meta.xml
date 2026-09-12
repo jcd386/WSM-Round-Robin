@@ -245,6 +245,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>WSM_Capacity_Query__c.WSM_Floor__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>WSM_Capacity_Query__c.WSM_Load_Weight__c</field>
         <readable>true</readable>
     </fieldPermissions>

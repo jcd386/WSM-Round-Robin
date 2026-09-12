@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WSM_Floor__c</fullName>
+    <description>Minimum this count should reach. Anyone below it is served FIRST: within a tier, if any eligible member is under the floor, the pick is restricted to those members until they catch up. This is a priority band, not a gate, so a member below the floor is never blocked by it. Use it to ramp somebody up, for example a new hire who should be fed until they hold a real book rather than only ever getting their even share. Leave blank for no floor. Must be lower than Cap when both are set.</description>
+    <inlineHelpText>Anyone under this number gets served first until they reach it. Leave blank for no floor.</inlineHelpText>
+    <label>Floor</label>
+    <precision>6</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+</CustomField>

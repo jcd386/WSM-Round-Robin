@@ -1,5 +1,5 @@
 /**
- * Dry-run result of WSM_RoundRobinService.preview(groupId) — no lock, no DML. Verdicts
+ * Dry-run result of WSM_RoundRobinService.preview(groupId): no lock, no DML. Verdicts
  * are returned in member query order (WSM_Tier__c, WSM_Sort_Order__c, Id); use sortRank on
  * each verdict for the algorithm's actual pick order among eligible members.
  *
@@ -53,6 +53,9 @@ public class WSM_RRPreview {
         public String label;
         public Integer count;
         public Integer cap;
+        public Integer floor;
+        /** True when this member is under the floor, so they are in the priority band. */
+        public Boolean belowFloor;
         public Boolean isCap;
         public Boolean isLoadMetric;
         public Boolean atCap;

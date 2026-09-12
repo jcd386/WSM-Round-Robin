@@ -155,6 +155,13 @@ public inherited sharing class WSM_CapacityQueryBuilder {
         if (def.isCap && def.cap == null) {
             return invalid(def, 'Role includes Cap but no Cap number is set.');
         }
+        if (def.hasFloor && def.floor < 0) {
+            return invalid(def, 'Floor cannot be negative.');
+        }
+        if (def.hasFloor && def.cap != null && def.floor >= def.cap) {
+            return invalid(def, 'Floor (' + def.floor + ') must be lower than Cap (' + def.cap
+                + '). Otherwise a member below the floor would be prioritised and blocked at the same time.');
+        }
         if (!def.isCap && !def.isLoadMetric) {
             return invalid(def, 'Role must be Cap, Load Metric, or Cap and Load Metric.');
         }

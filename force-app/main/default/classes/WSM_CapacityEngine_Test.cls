@@ -513,4 +513,141 @@ private class WSM_CapacityEngine_Test {
 
         System.assertEquals(false, def.isValid, 'An unbounded IN list must be rejected rather than built into a query.');
     }
+
+    // ---------------------------------------------------------------- floor
+
+    /** A capacity query that is a Load Metric with a floor, counting the SMOKE CAP accounts. */
+    private static WSM_Capacity_Query__c floorQuery(Id groupId, Integer floor, Integer cap) {
+        WSM_Capacity_Query__c config = WSM_RoundRobinTestFactory.makeCapacityQuery(
+            groupId, 'Book Size', 'Account',
+            cap == null ? WSM_CapacityQueryDef.ROLE_LOAD : WSM_CapacityQueryDef.ROLE_BOTH, cap);
+        config.WSM_Floor__c = floor;
+        insert config;
+        insert WSM_RoundRobinTestFactory.makeFilter(config.Id, 1, 'Name', 'starts with',
+            WSM_CapacityQueryBuilder.SRC_LITERAL, MARKER);
+        return config;
+    }
+
+    @isTest
+    static void floorServesTheUnderServedFirstEvenWhenTheyAreNotTheLeastLoaded() {
+        // Strict Rotation deliberately, so the ONLY thing that can put the under-floor
+        // member first is the floor band, not a load comparison.
+        WSM_Round_Robin_Group__c grp = WSM_RoundRobinTestFactory.insertGroup('Floor First', 'Strict Rotation');
+        List<User> users = WSM_RoundRobinTestFactory.insertUsers(2);
+        WSM_RoundRobinTestFactory.insertMembers(grp.Id, new List<Id>{ users[0].Id, users[1].Id });
+        // users[0] sorts first and is comfortably above the floor; users[1] is under it.
+        makeCountableAccounts(users[0].Id, 6, 'Banking');
+        makeCountableAccounts(users[1].Id, 1, 'Banking');
+        floorQuery(grp.Id, 5, null);
+
+        Test.startTest();
+        WSM_RRResult result = new WSM_RoundRobinEngine().assign(
+            new List<WSM_RRRequest>{ new WSM_RRRequest(grp.Id) })[0];
+        Test.stopTest();
+
+        System.assertEquals(users[1].Id, result.userId,
+            'The member under the floor must be served first, ahead of the one at Sort Order 0 who is already above it. This is the behaviour the old SFP flow intended and implemented backwards.');
+        WSM_Assignment_Log__c log = [SELECT WSM_Detail__c FROM WSM_Assignment_Log__c WHERE WSM_Group__c = :grp.Id LIMIT 1];
+        System.assert(log.WSM_Detail__c != null && log.WSM_Detail__c.contains('floor band'),
+            'The log must say the pick came out of the floor band: ' + log.WSM_Detail__c);
+    }
+
+    @isTest
+    static void floorIsAPriorityBandNotAGate() {
+        // Everyone under the floor: the band equals the pool, so it must be a no-op and
+        // normal ordering decides. A floor must never block anybody.
+        WSM_Round_Robin_Group__c grp = WSM_RoundRobinTestFactory.insertGroup('Floor NoOp', 'Strict Rotation');
+        List<User> users = WSM_RoundRobinTestFactory.insertUsers(2);
+        WSM_RoundRobinTestFactory.insertMembers(grp.Id, new List<Id>{ users[0].Id, users[1].Id });
+        floorQuery(grp.Id, 5, null);
+
+        Test.startTest();
+        List<WSM_RRResult> results = new WSM_RoundRobinEngine().assign(new List<WSM_RRRequest>{
+            new WSM_RRRequest(grp.Id), new WSM_RRRequest(grp.Id) });
+        Test.stopTest();
+
+        System.assertEquals(WSM_RRResult.STATUS_ASSIGNED, results[0].status, 'Nobody may be blocked by a floor.');
+        System.assertEquals(users[0].Id, results[0].userId, 'With everyone under the floor, normal Sort Order decides.');
+        System.assertEquals(users[1].Id, results[1].userId, 'And the rotation still alternates normally.');
+    }
+
+    @isTest
+    static void floorStopsApplyingOnceTheMemberReachesIt() {
+        WSM_Round_Robin_Group__c grp = WSM_RoundRobinTestFactory.insertGroup('Floor Reached', 'Strict Rotation');
+        List<User> users = WSM_RoundRobinTestFactory.insertUsers(2);
+        WSM_RoundRobinTestFactory.insertMembers(grp.Id, new List<Id>{ users[0].Id, users[1].Id });
+        makeCountableAccounts(users[0].Id, 4, 'Banking');
+        makeCountableAccounts(users[1].Id, 4, 'Banking');
+        floorQuery(grp.Id, 3, null);
+
+        Test.startTest();
+        WSM_RRResult result = new WSM_RoundRobinEngine().assign(
+            new List<WSM_RRRequest>{ new WSM_RRRequest(grp.Id) })[0];
+        Test.stopTest();
+
+        System.assertEquals(users[0].Id, result.userId,
+            'With both members at or above the floor, the floor is inert and Sort Order decides.');
+        WSM_Assignment_Log__c log = [SELECT WSM_Detail__c FROM WSM_Assignment_Log__c WHERE WSM_Group__c = :grp.Id LIMIT 1];
+        System.assertEquals(null, log.WSM_Detail__c, 'An inert floor must not add noise to the log.');
+    }
+
+    @isTest
+    static void floorAppliesInsideATierNotAcrossTiers() {
+        // A tier 2 member under the floor must NOT be pulled ahead of an available tier 1
+        // member. Tiers are the harder boundary; the floor only reorders within one.
+        WSM_Round_Robin_Group__c grp = WSM_RoundRobinTestFactory.insertGroup('Floor Tier', 'Strict Rotation');
+        List<User> users = WSM_RoundRobinTestFactory.insertUsers(2);
+        List<WSM_Round_Robin_Member__c> members =
+            WSM_RoundRobinTestFactory.insertMembers(grp.Id, new List<Id>{ users[0].Id, users[1].Id });
+        members[1].WSM_Tier__c = 2;
+        update members;
+        makeCountableAccounts(users[0].Id, 9, 'Banking');
+        floorQuery(grp.Id, 5, null);
+
+        Test.startTest();
+        WSM_RRResult result = new WSM_RoundRobinEngine().assign(
+            new List<WSM_RRRequest>{ new WSM_RRRequest(grp.Id) })[0];
+        Test.stopTest();
+
+        System.assertEquals(users[0].Id, result.userId,
+            'The tier 1 member wins even though the tier 2 member is under the floor. A bench is a bench; the floor cannot promote across a tier boundary.');
+    }
+
+    @isTest
+    static void floorMustBeLowerThanCap() {
+        WSM_Round_Robin_Group__c grp = WSM_RoundRobinTestFactory.insertGroup('Floor Bad', 'Strict Rotation');
+        WSM_Capacity_Query__c config = floorQuery(grp.Id, 10, 5);
+
+        List<WSM_RR_AdminController.CapacityQueryRow> rows = WSM_RR_AdminController.getCapacityQueries(grp.Id);
+
+        System.assertEquals(false, rows[0].valid,
+            'A floor at or above the cap would mark a member as both priority and blocked, which is incoherent.');
+        System.assert(rows[0].invalidReason.contains('must be lower than Cap'),
+            'The reason must explain the contradiction: ' + rows[0].invalidReason);
+    }
+
+    @isTest
+    static void previewReportsFloorStatus() {
+        WSM_Round_Robin_Group__c grp = WSM_RoundRobinTestFactory.insertGroup('Floor Preview', WSM_StrategyFactory.LEAST_LOADED);
+        List<User> users = WSM_RoundRobinTestFactory.insertUsers(2);
+        WSM_RoundRobinTestFactory.insertMembers(grp.Id, new List<Id>{ users[0].Id, users[1].Id });
+        makeCountableAccounts(users[0].Id, 8, 'Banking');
+        makeCountableAccounts(users[1].Id, 2, 'Banking');
+        floorQuery(grp.Id, 5, null);
+
+        Test.startTest();
+        WSM_RRPreview preview = new WSM_RoundRobinEngine().preview(grp.Id);
+        Test.stopTest();
+
+        for (WSM_RRPreview.MemberVerdict v : preview.verdicts) {
+            WSM_RRPreview.CapacityReading reading = v.capacity[0];
+            System.assertEquals(5, reading.floor, 'The floor must be exposed so the simulator can explain the ordering.');
+            if (v.userId == users[1].Id) {
+                System.assertEquals(true, reading.belowFloor, 'The member on 2 is under a floor of 5.');
+                System.assertEquals(1, v.sortRank, 'And must therefore rank first.');
+            } else {
+                System.assertEquals(false, reading.belowFloor, 'The member on 8 is above a floor of 5.');
+            }
+        }
+    }
 }

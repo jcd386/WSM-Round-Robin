@@ -167,6 +167,7 @@ export default class WsmRrCapacityPanel extends LightningElement {
             ownerField: row.ownerField || 'OwnerId',
             role: row.role || ROLE_CAP,
             cap: row.cap != null ? row.cap : null,
+            floor: row.floor != null ? row.floor : null,
             loadWeight: row.loadWeight != null ? row.loadWeight : 1,
             filterLogic: row.filterLogic || '',
             active: row.active !== false,
@@ -229,6 +230,7 @@ export default class WsmRrCapacityPanel extends LightningElement {
             ownerField: 'OwnerId',
             role: ROLE_CAP,
             cap: null,
+            floor: null,
             loadWeight: 1,
             filterLogic: '',
             active: true,
@@ -328,6 +330,13 @@ export default class WsmRrCapacityPanel extends LightningElement {
         const rowId = event.currentTarget.dataset.row;
         const raw = event.target.value;
         this.updateQuery(rowId, () => ({ cap: raw === '' ? null : Number(raw) }));
+        this.scheduleValidate(rowId);
+    }
+
+    handleFloorChange(event) {
+        const rowId = event.currentTarget.dataset.row;
+        const raw = event.target.value;
+        this.updateQuery(rowId, () => ({ floor: raw === '' ? null : Number(raw) }));
         this.scheduleValidate(rowId);
     }
 
@@ -500,6 +509,7 @@ export default class WsmRrCapacityPanel extends LightningElement {
             ownerField: q.ownerField,
             role: q.role,
             cap: q.cap,
+            floor: q.floor,
             loadWeight: q.loadWeight,
             filterLogic: q.filterLogic,
             active: q.active,
@@ -626,6 +636,9 @@ export default class WsmRrCapacityPanel extends LightningElement {
         const summaryParts = [objectLabel, q.role];
         if (showCap) {
             summaryParts.push(q.cap != null ? `cap ${q.cap}` : 'no cap set');
+        }
+        if (q.floor != null) {
+            summaryParts.push(`floor ${q.floor}`);
         }
         if (!q.active) {
             summaryParts.push('inactive');

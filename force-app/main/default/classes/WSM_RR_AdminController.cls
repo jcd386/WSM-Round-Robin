@@ -2,7 +2,7 @@
  * WSM_RR_AdminController
  *
  * Apex controller surface for the WSM Round Robin Manager admin app (wsmRr* LWCs).
- * Every method is @AuraEnabled and non-cacheable — this is an admin tool, not a
+ * Every method is @AuraEnabled and non-cacheable, because this is an admin tool, not a
  * high-traffic read surface, and callers always want the freshest state after a
  * mutation. Assignment decisions themselves are delegated to WSM_RoundRobinService
  * (assign/preview); this class never implements selection logic, only CRUD +
@@ -127,6 +127,8 @@ public with sharing class WSM_RR_AdminController {
         @AuraEnabled public String label;
         @AuraEnabled public Integer count;
         @AuraEnabled public Integer cap;
+        @AuraEnabled public Integer floor;
+        @AuraEnabled public Boolean belowFloor;
         @AuraEnabled public Boolean isCap;
         @AuraEnabled public Boolean isLoadMetric;
         @AuraEnabled public Boolean atCap;
@@ -142,6 +144,7 @@ public with sharing class WSM_RR_AdminController {
         @AuraEnabled public String ownerField;
         @AuraEnabled public String role;
         @AuraEnabled public Integer cap;
+        @AuraEnabled public Integer floor;
         @AuraEnabled public Decimal loadWeight;
         @AuraEnabled public String filterLogic;
         @AuraEnabled public Boolean active;
@@ -177,7 +180,7 @@ public with sharing class WSM_RR_AdminController {
         @AuraEnabled public List<String> picklistValues;
     }
 
-    // Shape of the JSON payload accepted by saveGroup(). Not @AuraEnabled — this
+    // Shape of the JSON payload accepted by saveGroup(). Not @AuraEnabled: this
     // class is only ever built by JSON.deserialize() from the LWC's request body,
     // never sent back to the client.
     private class SaveGroupInput {
@@ -710,7 +713,7 @@ public with sharing class WSM_RR_AdminController {
                 result.wouldAssignUserName = resolveUserName(assignResult.userId);
                 result.logId = assignResult.logId;
             } else {
-                // WSM_RRPreview has no status field — it only reports whether a member
+                // WSM_RRPreview has no status field. It only reports whether a member
                 // would be picked (wouldAssignUserId set) or the pool is effectively
                 // empty (null), which also covers group-not-found/inactive. The full
                 // GROUP_NOT_FOUND/GROUP_INACTIVE/FALLBACK/etc. taxonomy is only
@@ -749,6 +752,8 @@ public with sharing class WSM_RR_AdminController {
                     row.label = reading.label;
                     row.count = reading.count;
                     row.cap = reading.cap;
+                    row.floor = reading.floor;
+                    row.belowFloor = reading.belowFloor;
                     row.isCap = reading.isCap;
                     row.isLoadMetric = reading.isLoadMetric;
                     row.atCap = reading.atCap;
@@ -783,7 +788,7 @@ public with sharing class WSM_RR_AdminController {
             List<CapacityQueryRow> rows = new List<CapacityQueryRow>();
             for (WSM_Capacity_Query__c config : [
                 SELECT Id, Name, WSM_Label__c, WSM_Object__c, WSM_Owner_Field__c, WSM_Role__c,
-                       WSM_Cap__c, WSM_Load_Weight__c, WSM_Filter_Logic__c, WSM_Active__c,
+                       WSM_Cap__c, WSM_Floor__c, WSM_Load_Weight__c, WSM_Filter_Logic__c, WSM_Active__c,
                        WSM_Sort_Order__c, WSM_Description__c,
                        (SELECT Id, WSM_Filter_Number__c, WSM_Field__c, WSM_Operator__c,
                                WSM_Value_Source__c, WSM_Value__c, WSM_Routed_Record_Field__c
@@ -809,6 +814,7 @@ public with sharing class WSM_RR_AdminController {
         row.ownerField = config.WSM_Owner_Field__c;
         row.role = config.WSM_Role__c;
         row.cap = config.WSM_Cap__c != null ? config.WSM_Cap__c.intValue() : null;
+        row.floor = config.WSM_Floor__c != null ? config.WSM_Floor__c.intValue() : null;
         row.loadWeight = config.WSM_Load_Weight__c;
         row.filterLogic = config.WSM_Filter_Logic__c;
         row.active = config.WSM_Active__c;
@@ -847,6 +853,7 @@ public with sharing class WSM_RR_AdminController {
                 WSM_Owner_Field__c = input.ownerField,
                 WSM_Role__c = input.role,
                 WSM_Cap__c = input.cap,
+                WSM_Floor__c = input.floor,
                 WSM_Load_Weight__c = input.loadWeight,
                 WSM_Filter_Logic__c = input.filterLogic,
                 WSM_Active__c = input.active == null ? true : input.active
@@ -895,6 +902,7 @@ public with sharing class WSM_RR_AdminController {
             config.WSM_Owner_Field__c = input.ownerField;
             config.WSM_Role__c = String.isBlank(input.role) ? WSM_CapacityQueryDef.ROLE_CAP : input.role;
             config.WSM_Cap__c = input.cap;
+            config.WSM_Floor__c = input.floor;
             config.WSM_Load_Weight__c = input.loadWeight;
             config.WSM_Filter_Logic__c = input.filterLogic;
             config.WSM_Active__c = input.active == null ? true : input.active;
@@ -1044,6 +1052,7 @@ public with sharing class WSM_RR_AdminController {
         public String ownerField;
         public String role;
         public Integer cap;
+        public Integer floor;
         public Decimal loadWeight;
         public String filterLogic;
         public Boolean active;

@@ -163,6 +163,14 @@ public without sharing class WSM_RoundRobinEngine {
             if (eligible.isEmpty()) {
                 continue;
             }
+            List<WSM_MemberState> band = floorBand(eligible, groupState.capacityQueries);
+            if (!band.isEmpty()) {
+                String note = floorNote(band, groupState.capacityQueries);
+                if (note != null) {
+                    preview.warnings.add(note);
+                }
+                eligible = band;
+            }
             List<WSM_MemberState> ranked = strategy.sortMembers(eligible);
             for (Integer i = 0; i < ranked.size(); i++) {
                 rankByMember.put(ranked[i].record.Id, i + 1);
@@ -202,15 +210,18 @@ public without sharing class WSM_RoundRobinEngine {
             reading.capacityQueryId = def.configId;
             reading.label = def.label;
             reading.cap = def.cap;
+            reading.floor = def.floor;
             reading.isCap = def.isCap;
             reading.isLoadMetric = def.isLoadMetric;
             if (def.needsRoutedValue) {
                 reading.unavailableReason = 'Needs a value from the record being routed, so it cannot be previewed.';
                 reading.count = null;
                 reading.atCap = false;
+                reading.belowFloor = false;
             } else {
                 reading.count = member.capacityCount(def.configId);
                 reading.atCap = def.isCap && def.cap != null && reading.count >= def.cap;
+                reading.belowFloor = def.hasFloor && reading.count < def.floor;
             }
             readings.add(reading);
         }
@@ -634,7 +645,7 @@ public without sharing class WSM_RoundRobinEngine {
                 processOneRequest(i, requests[i], groupIdByIndex.get(i), lockedGroups, groupStates, pipeline, today, txnBase);
             } catch (Exception unexpected) {
                 // One bad request (unexpected null/data issue) must never abort the rest of
-                // the batch — isolate it as an ERROR result + log and keep going.
+                // the batch. Isolate it as an ERROR result + log and keep going.
                 Id gid = groupIdByIndex.get(i);
                 WSM_RRResult result = errorResult(WSM_RRResult.STATUS_ERROR, gid, 'Unexpected error: ' + unexpected.getMessage());
                 finalize(i, result, WSM_AssignmentLogger.buildLog(gid, null, null, null,
@@ -703,6 +714,14 @@ public without sharing class WSM_RoundRobinEngine {
             if (eligible.isEmpty()) {
                 continue;
             }
+            List<WSM_MemberState> band = floorBand(eligible, groupState.capacityQueries);
+            if (!band.isEmpty()) {
+                String note = floorNote(band, groupState.capacityQueries);
+                if (note != null) {
+                    notes.add(note);
+                }
+                eligible = band;
+            }
             winner = strategy.selectNext(eligible);
             winningTier = tier;
             break;
@@ -758,6 +777,50 @@ public without sharing class WSM_RoundRobinEngine {
         finalize(i, result, WSM_AssignmentLogger.buildLog(gid, winner.record.Id, winner.record.WSM_User__c,
             groupRecord.WSM_Algorithm__c, WSM_AssignmentLogger.LOG_STATUS_ASSIGNED, req,
             notes.isEmpty() ? null : String.join(notes, ' ')));
+    }
+
+
+    /**
+     * The floor band inside an already-eligible set: everyone sitting below the Floor on
+     * at least one capacity query that defines one. A floor is a priority band, never a
+     * gate, so this only ever REORDERS who is considered, and a member below a floor can
+     * still never be blocked by it.
+     *
+     * Returns an empty list when no floor applies or when nobody is under one, and the
+     * caller then selects from the full eligible set as normal. When every eligible member
+     * is under a floor the band equals the set, which is also a no-op: the point of a floor
+     * is to prefer the under-served over the well-served, and with nobody well-served there
+     * is nothing to prefer.
+     */
+    @TestVisible
+    private static List<WSM_MemberState> floorBand(List<WSM_MemberState> eligible, List<WSM_CapacityQueryDef> defs) {
+        List<WSM_MemberState> band = new List<WSM_MemberState>();
+        if (defs == null || defs.isEmpty()) {
+            return band;
+        }
+        for (WSM_MemberState member : eligible) {
+            for (WSM_CapacityQueryDef def : defs) {
+                if (def.isValid != true || !def.hasFloor) {
+                    continue;
+                }
+                if (member.capacityCount(def.configId) < def.floor) {
+                    band.add(member);
+                    break;
+                }
+            }
+        }
+        return band.size() == eligible.size() ? new List<WSM_MemberState>() : band;
+    }
+
+    /** Human-readable note for the log when a pick came out of the floor band. */
+    private static String floorNote(List<WSM_MemberState> band, List<WSM_CapacityQueryDef> defs) {
+        for (WSM_CapacityQueryDef def : defs) {
+            if (def.isValid == true && def.hasFloor) {
+                return 'Picked from the floor band on \'' + def.label + '\' (under ' + def.floor
+                    + '): ' + band.size() + ' member(s) still ramping up.';
+            }
+        }
+        return null;
     }
 
     private static Integer firstTier(WSM_GroupState groupState) {

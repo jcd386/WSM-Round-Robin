@@ -79,6 +79,23 @@ public class WSM_CapacityQueryDef {
         }
     }
 
+    /**
+     * Minimum this count should reach. Null means no floor. Unlike cap this never blocks
+     * anyone: it promotes whoever is under it ahead of whoever is not, inside their tier.
+     */
+    public Integer floor {
+        get {
+            if (record == null || record.WSM_Floor__c == null) {
+                return null;
+            }
+            return record.WSM_Floor__c.intValue();
+        }
+    }
+
+    public Boolean hasFloor {
+        get { return floor != null; }
+    }
+
     /** Defaults to 1 so a blank Load Weight behaves as "counts once". */
     public Decimal loadWeight {
         get {
