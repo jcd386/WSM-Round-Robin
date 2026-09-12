@@ -41,7 +41,7 @@
     <apiVersion>64.0</apiVersion>
     <assignments>
         <name>Assigned_Use_Owner_Id</name>
-        <label>Assigned — use Owner Id</label>
+        <label>Assigned, use Owner Id</label>
         <locationX>50</locationX>
         <locationY>430</locationY>
         <assignmentItems>
@@ -54,7 +54,7 @@
     </assignments>
     <assignments>
         <name>Fallback_User_Use_Owner_Id</name>
-        <label>Fallback user — use Owner Id</label>
+        <label>Fallback user, use Owner Id</label>
         <locationX>270</locationX>
         <locationY>430</locationY>
         <assignmentItems>
@@ -67,7 +67,7 @@
     </assignments>
     <assignments>
         <name>Fallback_Queue_Use_Owner_Id</name>
-        <label>Fallback queue — use Owner Id</label>
+        <label>Fallback queue, use Owner Id</label>
         <locationX>490</locationX>
         <locationY>430</locationY>
         <assignmentItems>
@@ -80,7 +80,7 @@
     </assignments>
     <assignments>
         <name>No_One_Available_Route_It_Yourself</name>
-        <label>No one available — route it yourself</label>
+        <label>No one available, route it yourself</label>
         <locationX>710</locationX>
         <locationY>430</locationY>
         <assignmentItems>
@@ -93,7 +93,7 @@
     </assignments>
     <assignments>
         <name>Error_Handle_Another_Way</name>
-        <label>Error — handle another way</label>
+        <label>Error, handle another way</label>
         <locationX>930</locationX>
         <locationY>430</locationY>
         <assignmentItems>
@@ -119,7 +119,7 @@
         <defaultConnector>
             <targetReference>Error_Handle_Another_Way</targetReference>
         </defaultConnector>
-        <defaultConnectorLabel>Error — handle another way</defaultConnectorLabel>
+        <defaultConnectorLabel>Error, handle another way</defaultConnectorLabel>
         <rules>
             <name>Assigned</name>
             <conditionLogic>and</conditionLogic>
@@ -133,7 +133,7 @@
             <connector>
                 <targetReference>Assigned_Use_Owner_Id</targetReference>
             </connector>
-            <label>Assigned — use Owner Id</label>
+            <label>Assigned, use Owner Id</label>
         </rules>
         <rules>
             <name>Fallback_User</name>
@@ -155,7 +155,7 @@
             <connector>
                 <targetReference>Fallback_User_Use_Owner_Id</targetReference>
             </connector>
-            <label>Fallback user — use Owner Id</label>
+            <label>Fallback user, use Owner Id</label>
         </rules>
         <rules>
             <name>Fallback_Queue</name>
@@ -177,7 +177,7 @@
             <connector>
                 <targetReference>Fallback_Queue_Use_Owner_Id</targetReference>
             </connector>
-            <label>Fallback queue — use Owner Id</label>
+            <label>Fallback queue, use Owner Id</label>
         </rules>
         <rules>
             <name>No_One_Available</name>
@@ -192,10 +192,10 @@
             <connector>
                 <targetReference>No_One_Available_Route_It_Yourself</targetReference>
             </connector>
-            <label>No one available — route it yourself</label>
+            <label>No one available, route it yourself</label>
         </rules>
     </decisions>
-    <description>CLONE ME — a starter template showing the recommended wiring pattern from the Round Robin Manager app's Wiring tab. Calls the "Round Robin: Get Assignee" action, then branches on the outcome with clearly labeled paths: Assigned / Fallback user / Fallback queue — all three can simply write Owner Id onto your record's OwnerId; No one available — the group had nobody eligible and no fallback, so route it yourself (e.g. a holding queue or a notification); Error (default) — config or transient problems, safe to retry once or alert an admin. Replace each placeholder Assignment element with your real logic, and set the group's developer name from the Wiring tab.</description>
+    <description>CLONE ME, a starter template showing the recommended wiring pattern from the Round Robin Manager app's Wiring tab. Calls the "Round Robin: Get Assignee" action, then branches on the outcome with clearly labeled paths: Assigned / Fallback user / Fallback queue, all three can simply write Owner Id onto your record's OwnerId; No one available, the group had nobody eligible and no fallback, so route it yourself (e.g. a holding queue or a notification); Error (default), config or transient problems, safe to retry once or alert an admin. Replace each placeholder Assignment element with your real logic, and set the group's developer name from the Wiring tab.</description>
     <environments>Default</environments>
     <interviewLabel>WSM - ALF - Round Robin: Example Assignment {!$Flow.CurrentDateTime}</interviewLabel>
     <isTemplate>true</isTemplate>
@@ -246,7 +246,7 @@
     <variables>
         <name>INC_Group_Developer_Name</name>
         <dataType>String</dataType>
-        <description>Developer name of the Round Robin Group (preferred — survives sandbox refreshes). Provide this or INC_Group_Id.</description>
+        <description>Developer name of the Round Robin Group (preferred, survives sandbox refreshes). Provide this or INC_Group_Id.</description>
         <isCollection>false</isCollection>
         <isInput>true</isInput>
         <isOutput>false</isOutput>

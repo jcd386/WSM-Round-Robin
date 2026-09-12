@@ -381,7 +381,7 @@ private class WSM_RR_AdminController_Test {
     }
 
     // ------------------------------------------------------------------
-    // updateMembers — absent vs. present-null field patching
+    // updateMembers, absent vs. present-null field patching
     // ------------------------------------------------------------------
 
     @IsTest
@@ -394,7 +394,7 @@ private class WSM_RR_AdminController_Test {
         m.WSM_Active__c = true;
         update m;
 
-        // Only "weight" is present — active and capOverride must be left untouched.
+        // Only "weight" is present, active and capOverride must be left untouched.
         String onlyWeightJson = '[{"memberId":"' + m.Id + '","weight":9}]';
         Test.startTest();
         WSM_RR_AdminController.updateMembers(onlyWeightJson);
@@ -409,7 +409,7 @@ private class WSM_RR_AdminController_Test {
         System.assertEquals(3, afterFirstUpdate.WSM_Cap_Override__c, 'Cap override should be untouched because its key was absent');
         System.assertEquals(true, afterFirstUpdate.WSM_Active__c, 'Active should be untouched because its key was absent');
 
-        // Now "capOverride" is present with an explicit null — it must be CLEARED,
+        // Now "capOverride" is present with an explicit null, it must be CLEARED,
         // while weight (absent this time) must remain untouched.
         String clearCapJson = '[{"memberId":"' + m.Id + '","capOverride":null}]';
         WSM_RR_AdminController.updateMembers(clearCapJson);
@@ -586,7 +586,7 @@ private class WSM_RR_AdminController_Test {
     }
 
     // ------------------------------------------------------------------
-    // simulate — dry-run vs. commit
+    // simulate, dry-run vs. commit
     // ------------------------------------------------------------------
 
     @IsTest

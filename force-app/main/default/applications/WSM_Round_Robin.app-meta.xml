@@ -4,7 +4,7 @@
         <headerColor>#1B5297</headerColor>
         <shouldOverrideOrgTheme>false</shouldOverrideOrgTheme>
     </brand>
-    <description>Round-robin lead and case assignment. Manage rotation groups, members, capacity, and availability from one guided app — no raw object access required.</description>
+    <description>Round-robin lead and case assignment. Manage rotation groups, members, capacity, and availability from one guided app, no raw object access required.</description>
     <formFactors>Large</formFactors>
     <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
     <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>

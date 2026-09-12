@@ -55,7 +55,7 @@
             <label>Assigned</label>
         </rules>
     </decisions>
-    <description>DEMO ONLY (WSM-Dev-AF test environment) — round-robins every new Lead across the Strict Rotation Demo group and stamps the Lead Id on the assignment log. Delete this flow when the test environment is torn down.</description>
+    <description>DEMO ONLY (WSM-Dev-AF test environment), round-robins every new Lead across the Strict Rotation Demo group and stamps the Lead Id on the assignment log. Delete this flow when the test environment is torn down.</description>
     <environments>Default</environments>
     <formulas>
         <name>ISNEW</name>

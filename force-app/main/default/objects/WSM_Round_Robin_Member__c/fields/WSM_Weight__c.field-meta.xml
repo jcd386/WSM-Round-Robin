@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>WSM_Weight__c</fullName>
-    <description>Relative weight used by the Weighted algorithm (stride = 1000 / weight — higher weight gets assignments more often). Blank defaults to 1 on save; must be between 1 and 100.</description>
+    <description>Relative weight used by the Weighted algorithm (stride = 1000 / weight, higher weight gets assignments more often). Blank defaults to 1 on save; must be between 1 and 100.</description>
     <inlineHelpText>Higher weight = assigned more often under the Weighted algorithm. 1-100.</inlineHelpText>
     <label>Weight</label>
     <precision>3</precision>

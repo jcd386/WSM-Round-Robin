@@ -2,7 +2,7 @@
  * Picks the lowest period-assignment count. Calibration=Median seeds any member with
  * zero assignments this period (which by construction from the period-filtered
  * aggregate means no assignment since period start) at floor(median of the eligible
- * pool's raw counts), so new or returning members don't get flooded to "catch up" —
+ * pool's raw counts), so new or returning members don't get flooded to "catch up",
  * Calibration=None leaves them at their true zero.
  */
 public inherited sharing class WSM_LeastAssignedStrategy implements WSM_ISelectionStrategy {

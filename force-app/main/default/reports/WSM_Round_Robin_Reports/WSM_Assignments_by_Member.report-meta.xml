@@ -15,7 +15,7 @@
     <columns>
         <field>CUST_CREATED_DATE</field>
     </columns>
-    <description>Count of Assigned outcomes per member over the last 30 days — the fairness check for capacity and Least Assigned tuning. Only Assigned rows count toward caps, so this mirrors what the engine sees.</description>
+    <description>Count of Assigned outcomes per member over the last 30 days, the fairness check for capacity and Least Assigned tuning. Only Assigned rows count toward caps, so this mirrors what the engine sees.</description>
     <filter>
         <criteriaItems>
             <column>WSM_Assignment_Log__c.WSM_Status__c</column>

@@ -1,5 +1,5 @@
 /**
- * Public, `with sharing` facade over WSM_RoundRobinEngine — the only entry point other
+ * Public, `with sharing` facade over WSM_RoundRobinEngine, the only entry point other
  * Apex code (controllers, invocables) should call directly. Static because the
  * service is stateless: every call builds a fresh WSM_RoundRobinEngine and delegates
  * straight through. The engine field stays swappable (@TestVisible) even though it's

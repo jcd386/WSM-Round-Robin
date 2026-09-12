@@ -3,7 +3,7 @@
     <apiVersion>64.0</apiVersion>
     <isExposed>true</isExposed>
     <masterLabel>WSM Round Robin Help</masterLabel>
-    <description>Utility bar help panel — what it is, quick start, generic Flow wiring guide, permissions note.</description>
+    <description>Utility bar help panel, what it is, quick start, generic Flow wiring guide, permissions note.</description>
     <targets>
         <target>lightning__UtilityBar</target>
     </targets>

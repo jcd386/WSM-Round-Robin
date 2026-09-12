@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
-    <description>Round Robin admin shell — group list, member management, capacity, activity, and the simulator. The only surface customers need for day-to-day management.</description>
+    <description>Round Robin admin shell: group list, member management, capacity, activity, and the simulator. The only surface customers need for day-to-day management.</description>
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>

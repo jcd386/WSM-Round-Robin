@@ -3,7 +3,7 @@
     <apiVersion>64.0</apiVersion>
     <isExposed>true</isExposed>
     <masterLabel>WSM Round Robin Manager</masterLabel>
-    <description>Primary admin surface — group list rail, workspace tabs, and guided setup. Home of the WSM Round Robin app page.</description>
+    <description>Primary admin surface, group list rail, workspace tabs, and guided setup. Home of the WSM Round Robin app page.</description>
     <targets>
         <target>lightning__AppPage</target>
         <target>lightning__HomePage</target>

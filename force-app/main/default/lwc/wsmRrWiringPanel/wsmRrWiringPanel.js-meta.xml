@@ -3,5 +3,5 @@
     <apiVersion>64.0</apiVersion>
     <isExposed>false</isExposed>
     <masterLabel>WSM Round Robin Wiring Guide</masterLabel>
-    <description>Wiring tab — numbered copy-paste Flow wiring guide pre-filled with the group's developer name.</description>
+    <description>Wiring tab, numbered copy-paste Flow wiring guide pre-filled with the group's developer name.</description>
 </LightningComponentBundle>

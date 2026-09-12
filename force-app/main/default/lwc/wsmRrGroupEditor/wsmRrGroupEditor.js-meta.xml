@@ -3,5 +3,5 @@
     <apiVersion>64.0</apiVersion>
     <isExposed>false</isExposed>
     <masterLabel>WSM Round Robin Group Settings</masterLabel>
-    <description>Settings tab — algorithm, capacity, fallback user, developer-name slug, description.</description>
+    <description>Settings tab, algorithm, capacity, fallback user, developer-name slug, description.</description>
 </LightningComponentBundle>

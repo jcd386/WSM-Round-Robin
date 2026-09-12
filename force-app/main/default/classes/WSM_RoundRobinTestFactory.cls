@@ -80,7 +80,7 @@ public class WSM_RoundRobinTestFactory {
         return users;
     }
 
-    /** A plain, non-admin user with no WSM permission set assigned — for the without-sharing smoke test. */
+    /** A plain, non-admin user with no WSM permission set assigned, for the without-sharing smoke test. */
     public static User insertRestrictedUser() {
         return insertUsers(1)[0];
     }

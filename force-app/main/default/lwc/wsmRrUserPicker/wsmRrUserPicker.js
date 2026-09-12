@@ -6,7 +6,7 @@ import { reduceErrorMessage, debounce } from 'c/wsmRrUtils';
  * Searchable User picker built on c-wsm-rr-combobox.
  * multi=false: single-select, fires 'select' {userId, name}.
  * multi=true: chip picker, fires 'chipschange' {value: [{userId, name}]} on every
- *   add/remove — the parent owns when to actually persist (e.g. an "Add" button
+ *   add/remove, the parent owns when to actually persist (e.g. an "Add" button
  *   that calls addMembers immediately, per the no-JS-only-datatable-rows rule).
  */
 export default class WsmRrUserPicker extends LightningElement {
@@ -96,7 +96,7 @@ export default class WsmRrUserPicker extends LightningElement {
         this.dispatchEvent(new CustomEvent('chipschange', { detail: { value: [...this.chips] } }));
     }
 
-    /** Clears chips (multi) or the single selection — called by parent after a successful save. */
+    /** Clears chips (multi) or the single selection, called by parent after a successful save. */
     @api
     reset() {
         this.chips = [];

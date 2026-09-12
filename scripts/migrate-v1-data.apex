@@ -1,5 +1,5 @@
 // WSM Round Robin v1 -> v2 data migration (houston-dynamo-prod).
-// Idempotent: safe to re-run after mid-migration assignments — it upserts groups by
+// Idempotent: safe to re-run after mid-migration assignments, it upserts groups by
 // developer name, upserts members by unique key, and re-seeds WSM_Last_Assigned__c
 // from the v1 pointer so the rotation continues exactly where v1 left off.
 // Run AFTER installing WSM Round Robin 2.0, BEFORE cutting caller flows over.

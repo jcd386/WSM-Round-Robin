@@ -1,8 +1,8 @@
 /**
  * Pure algorithm-math tests against the strategy classes directly, using in-memory
- * WSM_MemberState objects with synthetic (unsaved) Ids — no DML, no org config. Engine
+ * WSM_MemberState objects with synthetic (unsaved) Ids, no DML, no org config. Engine
  * integration (real caps, real OOO gates, real period aggregates, bulk/concurrency) is
- * covered separately in WSM_RoundRobinEngine_Test. Real assertions throughout — this
+ * covered separately in WSM_RoundRobinEngine_Test. Real assertions throughout, this
  * suite is exempted from the org's coverage-only convention because algorithm
  * correctness is the entire point of the product (see plan §Test strategy).
  */
@@ -89,7 +89,7 @@ private class WSM_Strategies_Test {
     @isTest
     static void weighted_nullRotationJoinsAtPoolMinimum() {
         // established sits at the true pool minimum (0). A joiner (null rotation) must
-        // win outright over it, not merely tie — a plain tie recomputed fresh every round
+        // win outright over it, not merely tie, a plain tie recomputed fresh every round
         // could lose the tie-break to the same front-runner forever and never settle.
         WSM_MemberState established = memberState(1, 0, null, 0);
         WSM_MemberState joiner = memberState(1, null, null, 1);

@@ -2,7 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>WSM_Unique_Key__c</fullName>
     <caseSensitive>false</caseSensitive>
-    <description>System-generated {groupId}|{userId} key that prevents the same user from holding two active seats in the same group. Set by the member trigger — do not edit.</description>
+    <description>System-generated {groupId}|{userId} key that prevents the same user from holding two active seats in the same group. Set by the member trigger, do not edit.</description>
     <externalId>false</externalId>
     <inlineHelpText>System-managed uniqueness key. Do not edit.</inlineHelpText>
     <label>Unique Key</label>

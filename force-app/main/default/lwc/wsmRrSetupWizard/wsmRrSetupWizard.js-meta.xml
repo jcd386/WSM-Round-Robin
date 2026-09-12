@@ -3,5 +3,5 @@
     <apiVersion>64.0</apiVersion>
     <isExposed>false</isExposed>
     <masterLabel>WSM Round Robin Setup Wizard</masterLabel>
-    <description>3-step New Group wizard — modal or full-width empty-state variant.</description>
+    <description>3-step New Group wizard, modal or full-width empty-state variant.</description>
 </LightningComponentBundle>

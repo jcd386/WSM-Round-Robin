@@ -4,13 +4,13 @@
  * range). Picks the lowest effective rotation value; a null rotation value (a brand
  * new seat) is treated as EPSILON below the current pool minimum so a joiner is
  * guaranteed the very next slot rather than merely tying for it. A plain tie at the
- * pool minimum isn't enough — a joiner recomputes "effective = poolMin" fresh on every
+ * pool minimum isn't enough, a joiner recomputes "effective = poolMin" fresh on every
  * call, so with a plain tie it can lose the tie-break (Last Assigned/Sort Order/Id) to
  * the same front-runner forever and never receive a real rotation value. Subtracting
  * EPSILON makes the joiner strictly less than any exact-poolMin match, so it always
  * wins its first eligible round; after that it holds a real rotation value and follows
  * normal cadence like everyone else. Only the winning row's rotation value changes
- * here — lastAssigned/period-count bookkeeping is the engine's job.
+ * here, lastAssigned/period-count bookkeeping is the engine's job.
  */
 public inherited sharing class WSM_WeightedStrategy implements WSM_ISelectionStrategy {
 

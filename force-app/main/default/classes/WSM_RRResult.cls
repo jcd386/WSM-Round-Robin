@@ -1,6 +1,6 @@
 /**
- * Outcome of one WSM_RRRequest. Always returned — even for lock timeouts, missing
- * groups, and empty pools — so a batch of requests never throws on a single bad one.
+ * Outcome of one WSM_RRRequest. Always returned, even for lock timeouts, missing
+ * groups, and empty pools, so a batch of requests never throws on a single bad one.
  */
 public class WSM_RRResult {
 
@@ -21,7 +21,7 @@ public class WSM_RRResult {
     public Id logId;
     public String message;
 
-    /** The Id to drop into OwnerId — the assigned user, or the fallback queue when no user was eligible. */
+    /** The Id to drop into OwnerId, the assigned user, or the fallback queue when no user was eligible. */
     public Id ownerId {
         get {
             return userId != null ? userId : queueId;

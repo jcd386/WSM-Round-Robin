@@ -72,7 +72,7 @@
                         <lightning-input
                             type="number"
                             label="Default member cap"
-                            field-level-help="The most assignments one person can get in a period. You can give any person their own number on the Members tab — blank there means they use this default, and 0 means they never get assigned."
+                            field-level-help="The most assignments one person can get in a period. You can give any person their own number on the Members tab, blank there means they use this default, and 0 means they never get assigned."
                             placeholder="Uncapped"
                             value={defaultMemberCap}
                             onchange={handleCapChange}
@@ -100,7 +100,7 @@
                 <div class="slds-form-element slds-m-top_small">
                     <span class="slds-form-element__label">Developer name</span>
                     <lightning-helptext
-                        content="The group's permanent nickname. Flows use it to find this group, and it never changes — even if you rename the group later."
+                        content="The group's permanent nickname. Flows use it to find this group, and it never changes, even if you rename the group later."
                     ></lightning-helptext>
                     <template lwc:if={isSlugEditable}>
                         <lightning-input
@@ -118,7 +118,7 @@
                             </button>
                         </div>
                     </template>
-                    <p class="slds-form-element__help ge__caption">This is the stable key flows reference — set once, then locked.</p>
+                    <p class="slds-form-element__help ge__caption">This is the stable key flows reference. Set once, then locked.</p>
                 </div>
 
                 <lightning-textarea

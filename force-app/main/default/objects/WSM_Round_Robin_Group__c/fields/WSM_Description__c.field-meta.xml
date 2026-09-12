@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>WSM_Description__c</fullName>
-    <description>Free-text notes about this group's purpose, ownership, or wiring — shown to admins, never read by the assignment engine.</description>
+    <description>Free-text notes about this group's purpose, ownership, or wiring. Shown to admins, never read by the assignment engine.</description>
     <inlineHelpText>Internal notes only. Not read by the assignment engine.</inlineHelpText>
     <label>Description</label>
     <length>1000</length>

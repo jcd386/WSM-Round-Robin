@@ -16,8 +16,8 @@ const STEP_LABELS = ['Basics', 'Members', 'Review & activate'];
 
 /**
  * 3-step "New Group" wizard. Renders as a centered modal (variant="modal", the
- * default — used from the "New Group" button) or as a full-width inline card
- * (variant="empty" — used as the Manager's zero-groups empty state).
+ * default, used from the "New Group" button) or as a full-width inline card
+ * (variant="empty", used as the Manager's zero-groups empty state).
  */
 export default class WsmRrSetupWizard extends LightningElement {
     @api variant = 'modal';
@@ -73,7 +73,7 @@ export default class WsmRrSetupWizard extends LightningElement {
     }
 
     get stepIndicator() {
-        return `Step ${this.step} of 3 — ${STEP_LABELS[this.step - 1]}`;
+        return `Step ${this.step} of 3, ${STEP_LABELS[this.step - 1]}`;
     }
 
     get isStep1() {
@@ -145,7 +145,7 @@ export default class WsmRrSetupWizard extends LightningElement {
             return 'No cap';
         }
         const cap = this.basics.defaultMemberCap == null ? 'uncapped' : this.basics.defaultMemberCap;
-        return `${this.basics.period} — default cap ${cap}`;
+        return `${this.basics.period}, default cap ${cap}`;
     }
 
     get fallbackSummary() {

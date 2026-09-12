@@ -10,7 +10,7 @@ const ALGORITHM_CAPTIONS = {
 };
 
 const CALIBRATION_CAPTIONS = {
-    Median: 'New or returning members join mid-period at the pool median, not zero — avoids a flood.',
+    Median: 'New or returning members join mid-period at the pool median, not zero, avoids a flood.',
     None: 'New members start at zero and may receive several in a row to catch up.'
 };
 

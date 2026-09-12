@@ -1,7 +1,7 @@
 /**
  * Blocked when today >= OOO Start AND today < OOO Return (the return day itself is
  * eligible). A blank Start means the member was never marked OOO. A Start with a blank
- * Return means OOO indefinitely from that date — there's no way to represent "OOO
+ * Return means OOO indefinitely from that date, there's no way to represent "OOO
  * forever" other than leaving Return blank, so that's treated as an open-ended window
  * rather than a data error.
  */

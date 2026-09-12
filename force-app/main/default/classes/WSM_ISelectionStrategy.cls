@@ -6,7 +6,7 @@
  */
 public interface WSM_ISelectionStrategy {
 
-    /** Full pick-order ranking of members — used by selectNext() and by preview() for sortRank. */
+    /** Full pick-order ranking of members, used by selectNext() and by preview() for sortRank. */
     List<WSM_MemberState> sortMembers(List<WSM_MemberState> members);
 
     /** Returns the winner, or null if eligibleMembers is empty. */

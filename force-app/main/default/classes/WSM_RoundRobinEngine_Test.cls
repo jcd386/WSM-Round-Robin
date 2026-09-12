@@ -1,7 +1,7 @@
 /**
  * Integration coverage for WSM_RoundRobinEngine against real records: locking, bulk
  * correctness, capacity, out-of-office, period-window resets, and the concurrency
- * retry/timeout seam. Real assertions throughout — see WSM_Strategies_Test for why this
+ * retry/timeout seam. Real assertions throughout, see WSM_Strategies_Test for why this
  * suite is exempt from the org's coverage-only convention.
  */
 @isTest
@@ -51,7 +51,7 @@ private class WSM_RoundRobinEngine_Test {
             requests.add(new WSM_RRRequest(grp.Id));
         }
 
-        // Measured within a single governor-limit context — Test.startTest()/stopTest()
+        // Measured within a single governor-limit context, Test.startTest()/stopTest()
         // would reset these counters and make a before/after delta across that boundary
         // meaningless, so this deliberately doesn't use them.
         Integer queriesBefore = Limits.getQueries();
@@ -230,7 +230,7 @@ private class WSM_RoundRobinEngine_Test {
         WSM_RRResult result = new WSM_RoundRobinEngine().assign(new List<WSM_RRRequest>{ new WSM_RRRequest(grp.Id) })[0];
 
         System.assertEquals(users[0].Id, result.userId,
-            'A log row from before today\'s Daily window must not count against member A — both members should show 0 for today, and the Strict-style tie falls to the eligibility/sort order, not to yesterday\'s count.');
+            'A log row from before today\'s Daily window must not count against member A, both members should show 0 for today, and the Strict-style tie falls to the eligibility/sort order, not to yesterday\'s count.');
     }
 
     @isTest
@@ -307,7 +307,7 @@ private class WSM_RoundRobinEngine_Test {
     static void unknownAlgorithm_engineDefaultsToStrictAndLogsWarning() {
         // WSM_Algorithm__c is a restricted picklist, so a bad value can never actually be
         // persisted via DML (allOrNone=false would just silently drop the field change,
-        // not bypass the restriction) — a stub selector hands the engine an in-memory
+        // not bypass the restriction), a stub selector hands the engine an in-memory
         // group row carrying an unrecognized value instead, simulating data drift from a
         // future release landing on an org still running this version.
         WSM_Round_Robin_Group__c grp = WSM_RoundRobinTestFactory.insertGroup('Weird Algorithm', 'Strict Rotation');
@@ -394,7 +394,7 @@ private class WSM_RoundRobinEngine_Test {
         WSM_RoundRobinTestFactory.insertMember(goodGroup.Id, users[0].Id);
 
         // A request with neither groupId nor groupDeveloperName resolves to
-        // GROUP_NOT_FOUND at the resolve step — the well-formed request alongside it in
+        // GROUP_NOT_FOUND at the resolve step, the well-formed request alongside it in
         // the same batch must still succeed.
         List<WSM_RRRequest> requests = new List<WSM_RRRequest>{ new WSM_RRRequest(), new WSM_RRRequest(goodGroup.Id) };
         List<WSM_RRResult> results = new WSM_RoundRobinEngine().assign(requests);

@@ -3,5 +3,5 @@
     <apiVersion>64.0</apiVersion>
     <isExposed>false</isExposed>
     <masterLabel>WSM Round Robin Group List</masterLabel>
-    <description>Left rail group list for the Round Robin Manager — algorithm chip, active dot, counts.</description>
+    <description>Left rail group list for the Round Robin Manager, algorithm chip, active dot, counts.</description>
 </LightningComponentBundle>

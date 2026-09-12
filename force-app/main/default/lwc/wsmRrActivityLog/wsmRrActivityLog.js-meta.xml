@@ -3,5 +3,5 @@
     <apiVersion>64.0</apiVersion>
     <isExposed>false</isExposed>
     <masterLabel>WSM Round Robin Activity Log</masterLabel>
-    <description>Activity tab — per-member period bars, last-25 assignment log, Reset Counters.</description>
+    <description>Activity tab, per-member period bars, last-25 assignment log, Reset Counters.</description>
 </LightningComponentBundle>

@@ -129,7 +129,7 @@
                         </ul>
                     </template>
                     <template lwc:if={hasNoPendingMembers}>
-                        <p class="slds-text-color_weak wiz__empty">No members added yet — search above.</p>
+                        <p class="slds-text-color_weak wiz__empty">No members added yet, search above.</p>
                     </template>
                 </div>
             </template>
@@ -138,7 +138,7 @@
                 <div class="wiz__review">
                     <dl class="wiz__summary">
                         <dt>Name</dt><dd>{basics.name}</dd>
-                        <dt>Algorithm</dt><dd>{basics.algorithm} — {algorithmCaption}</dd>
+                        <dt>Algorithm</dt><dd>{basics.algorithm}, {algorithmCaption}</dd>
                         <dt>Capacity</dt><dd>{capacitySummary}</dd>
                         <dt>Fallback</dt><dd>{fallbackSummary}</dd>
                         <dt>Members</dt><dd>{memberCountSummary}</dd>
